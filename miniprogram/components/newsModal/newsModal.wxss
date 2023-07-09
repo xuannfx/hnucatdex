@@ -11,9 +11,9 @@
 
 .wx-modal-catlogo {
     position: absolute;
-    top: -100rpx;
-    right: 10rpx;
+    top: -105rpx;
     height: 110rpx;
+    margin-left: 95rpx;
 
 }
 

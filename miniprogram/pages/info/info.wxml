@@ -49,52 +49,21 @@
 </view></block>
 
 <block wx:if='{{showManager}}'><view class='block-name'>管理后台</view>
-<view class='option-box'>
-  <view class="option" bindtap='clickbtn' data-to='/pages/manage/checkPhotos/checkPhotos'>
-    <view class="option-text">照片审核({{numChkPhotos}})</view>
-    <view class="right-arrow"><image mode='aspectFill' src="/pages/public/images/filter/right.png"></image></view> 
-  </view>
-  <view class="option" bindtap='clickbtn' data-to='/pages/manage/checkFeedbacks/checkFeedbacks'>
-    <view class="option-text">反馈处理({{numFeedbacks}})</view>
-    <view class="right-arrow"><image mode='aspectFill' src="/pages/public/images/filter/right.png"></image></view> 
-  </view>
-  <view class="option" bindtap='clickbtn' data-to='/pages/manage/addRelations/addRelations'>
-    <view class="option-text">猫猫关系</view>
-    <view class="right-arrow"><image mode='aspectFill' src="/pages/public/images/filter/right.png"></image></view> 
-  </view>
-  <view class="option" bindtap='clickbtn' data-to='/pages/news/createNews/createNews'>
-    <view class="option-text">创建公告（猫抓板）</view>
-    <view class="right-arrow"><image mode='aspectFill' src="/pages/public/images/filter/right.png"></image></view> 
-  </view>
-  <view class="option" bindtap='clickbtn' data-to='/pages/manage/filters/filters'>
-    <view class="option-text">区域/花色</view>
-    <view class="right-arrow"><image mode='aspectFill' src="/pages/public/images/filter/right.png"></image></view> 
-  </view>
-  <view class="option" bindtap='clickbtn' data-to='/pages/manage/addCat/addCat'>
-    <view class="option-text">添加新猫</view>
-    <view class="right-arrow"><image mode='aspectFill' src="/pages/public/images/filter/right.png"></image></view> 
-  </view>
-  <view class="option" bindtap='clickbtn' data-to='/pages/manage/managers/managers'>
-    <view class="option-text">人员管理</view>
-    <view class="right-arrow"><image mode='aspectFill' src="/pages/public/images/filter/right.png"></image></view> 
-  </view>
-  <view class="option" bindtap='clickbtn' data-to='/pages/manage/pageSettings/pageSettings'>
-    <view class="option-text">页面配置</view>
-    <view class="right-arrow"><image mode='aspectFill' src="/pages/public/images/filter/right.png"></image></view> 
-  </view>
-  <view class="option" bindtap='clickbtn' data-to='/pages/manage/rewards/rewards'>
-    <view class="option-text">投喂记录</view>
-    <view class="right-arrow"><image mode='aspectFill' src="/pages/public/images/filter/right.png"></image></view> 
-  </view>
-  <view class="option" bindtap='clickbtn' data-to='/pages/tools/inviteUser/inviteUser'>
-    <view class="option-text">特邀用户</view>
-    <view class="right-arrow"><image mode='aspectFill' src="/pages/public/images/filter/right.png"></image></view> 
-  </view>
-  <view class="option" style="color: var(--color-gray-dark);" bindtap='clickbtn' data-to='/pages/manage/imProcess/imProcess'>
-    <view class="option-text">照片处理({{numImProcess}})</view>
-    <view class="right-arrow"><image mode='aspectFill' src="/pages/public/images/filter/right.png"></image></view> 
-  </view>
-</view></block>
+  <van-grid column-num="3" custom-class="option-box" border="{{ false }}" >
+        <van-grid-item icon="description" text="管理员操作手册" text-class="option-text" bindtap='guide' dot />
+        <van-grid-item icon="photo-o" text="照片审核" text-class="option-text" bindtap='clickbtn' data-to='/pages/manage/checkPhotos/checkPhotos' badge="{{numChkPhotos}}" />
+        <van-grid-item icon="envelop-o" text="反馈处理" text-class="option-text" bindtap='clickbtn' data-to='/pages/manage/checkFeedbacks/checkFeedbacks' badge="{{numFeedbacks}}" />
+        <van-grid-item icon="cluster-o" text="管理猫际关系" text-class="option-text" bindtap='clickbtn' data-to='/pages/manage/addRelations/addRelations' />
+        <van-grid-item icon="edit" text="创建猫抓板公告" text-class="option-text" bindtap='clickbtn' data-to='/pages/news/createNews/createNews' />
+        <van-grid-item icon="add-o" text="添加新猫" text-class="option-text" bindtap='clickbtn' data-to='/pages/manage/addCat/addCat' />
+        <van-grid-item icon="manager-o" text="人员管理" text-class="option-text" bindtap='clickbtn' data-to='/pages/manage/managers/managers' />
+        <van-grid-item icon="share-o" text="特邀用户" text-class="option-text" bindtap='clickbtn' data-to='/pages/tools/inviteUser/inviteUser' />
+        <van-grid-item icon="location-o" text="区域/花色管理" text-class="option-text" bindtap='clickbtn' data-to='/pages/manage/filters/filters' />
+        <van-grid-item icon="newspaper-o" text="页面配置" text-class="option-text" bindtap='clickbtn' data-to='/pages/manage/pageSettings/pageSettings' />
+        <van-grid-item icon="balance-o" text="投喂记录管理" text-class="option-text" bindtap='clickbtn' data-to='/pages/manage/rewards/rewards' />
+        <van-grid-item icon="todo-list-o" text="照片处理" style="color: var(--color-gray-dark);"  text-class="option-text.gray" bindtap='clickbtn' data-to='/pages/manage/imProcess/imProcess' badge="{{numImProcess}}"  />
+    </van-grid>
+</block>
 
 <!-- 底tab占位 -->
 <view style="height: {{tabBarHeight}}px;"></view>

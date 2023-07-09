@@ -26,19 +26,11 @@ Page({
   },
 
   async toNewCat() {
-    const src = await cloud.signCosUrl(feedback_wj_img);
-    wx.previewImage({
-      urls: [src],
-      success: (res) => {
-        console.log(res);
-      },
-      fail: (res) => {
-        console.log(res);
-      },
-      complete: (res) => {
-        console.log(res);
-      },
-    });
+    wx.openEmbeddedMiniProgram({
+      // 要跳转的小程序的appid
+      appId: 'wxebadf544ddae62cb',
+      path: 'pages/survey/index?sid=9293049&hash=b144&navigateBackMiniProgram=true',
+    })
   },
 
   /**

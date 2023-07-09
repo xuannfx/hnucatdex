@@ -126,6 +126,7 @@ button {
   width: 100%;
   font-size: 30rpx;
   background-color: var(--color-primary);
+  color: var(--color-white);
   margin: 10rpx;
   border: 1rpx solid var(--color-gray-max);
   border-radius: 20rpx;

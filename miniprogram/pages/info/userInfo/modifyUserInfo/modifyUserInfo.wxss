@@ -20,6 +20,7 @@ page {
 button.primary {
   margin-top: 10rpx;
   background-color: var(--color-primary);
+  color: var(--color-white);
   width: 300rpx;
 }
 

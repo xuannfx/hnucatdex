@@ -98,6 +98,7 @@ button.long {
 
 button.primary {
   background-color: var(--color-primary);
+  color: var(--color-white);
 }
 
 button + button {

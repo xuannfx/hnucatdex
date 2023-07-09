@@ -3,7 +3,7 @@ module.exports = {
     "pagePath": "pages/genealogy/genealogy",
     "iconPath": "/pages/public/images/tabs/default/cat.png",
     "selectedIconPath": "/pages/public/images/tabs/active/cat.png",
-    "text": "猫谱"
+    "text": "图鉴"
   },
   recognize: {
     "pagePath": "pages/recognize/recognize",

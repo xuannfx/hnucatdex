@@ -32,6 +32,7 @@ page {
   width: 130rpx;
   padding: 10rpx 20rpx;
   font-size: 24rpx;
+  border-radius: 15rpx;
   background-color: var(--color-primary-light);
   white-space: nowrap;
   text-overflow:ellipsis;
@@ -40,6 +41,7 @@ page {
 }
 .relation-name.tap {
   background-color: var(--color-primary);
+  color: var(--color-white);
 }
 
 .relation-cat {
@@ -64,6 +66,7 @@ page {
   font-size: 24rpx;
   margin-top: -30rpx;
   width: 120rpx;
+  border-radius: 15rpx;
   text-align: center;
   white-space: nowrap;
   text-overflow:ellipsis;

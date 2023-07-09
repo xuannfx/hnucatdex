@@ -31,6 +31,8 @@
     <picker mode="selector" range='{{pickers.sterilized}}' value='{{picker_selected.sterilized}}' bindchange='pickerChange' data-key='sterilized'>{{cat.sterilized == undefined? '请选择': cat.sterilized}}</picker>
     <view class='label adopt'>领养状态：</view>
     <picker mode="selector" range='{{pickers.adopt}}' range-key='desc' value='{{picker_selected.adopt}}' bindchange='pickerChange' data-key='adopt'>{{cat.adopt == undefined? '请选择': pickers.adopt[cat.adopt].desc}}</picker>
+    <view class='label to_star'>是否失踪：</view>
+    <picker mode="selector" range='{{pickers.missing}}' value='0' bindchange='pickerChange' data-key='missing'>{{cat.missing == undefined? '请选择': cat.missing}}</picker>  
     <view class='label to_star'>返回喵星：</view>
     <picker mode="selector" range='{{pickers.to_star}}' value='{{picker_selected.to_star}}' bindchange='pickerChange' data-key='to_star'>{{cat.to_star == undefined? '请选择': cat.to_star}}</picker>
     <view class='label popularity'>人气：{{cat.popularity}}</view>

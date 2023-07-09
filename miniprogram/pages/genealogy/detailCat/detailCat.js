@@ -345,6 +345,12 @@ Page({
     });
   },
 
+  bindTapAdopt() {
+    wx.navigateTo({
+      url: '/pages/genealogy/adoptme/adoptme?cat_id=' + this.data.cat._id,
+    });
+  },
+
   bindAddPhoto() {
     wx.navigateTo({
       url: '/pages/genealogy/addPhoto/addPhoto?cat_id=' + this.data.cat._id,
@@ -619,5 +625,13 @@ Page({
     wx.navigateTo({
       url: url,
     });
+  },
+
+  //弹出层
+  showPopup() {
+    this.setData({ show: true });
+  },
+  onClose() {
+    this.setData({ show: false });
   },
 })

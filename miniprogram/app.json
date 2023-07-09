@@ -30,6 +30,7 @@
     "pages/manage/addRelations/addRelations",
     "pages/tools/updateUserRole/updateUserRole",
     "pages/leaderboard/leaderboard",
+    "pages/genealogy/adoptme/adoptme",
     "pages/manage/pageSettings/pageSettings",
     "pages/tools/inviteUser/inviteUser",
     "pages/info/userInfo/modifyUserInfo/modifyUserInfo",
@@ -60,11 +61,11 @@
     ]
   },
   "window": {
-    "backgroundColor": "#fff",
+    "backgroundColor": "#f7f7fa",
     "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#ffd101",
-    "navigationBarTitleText": "中大猫谱",
-    "navigationBarTextStyle": "black"
+    "navigationBarBackgroundColor": "#C70000",
+    "navigationBarTitleText": "喵汪图鉴",
+    "navigationBarTextStyle": "white"
   },
   "supportedMaterials": [
     {
@@ -74,5 +75,14 @@
       "path": "pages/recognize/recognize"
     }
   ],
-  "sitemapLocation": "sitemap.json"
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents",
+  "embeddedAppIdList": ["wxebadf544ddae62cb","wxd45c635d754dbf59"],
+  "usingComponents": {
+      "van-popup": "@vant/weapp/popup/index",
+      "van-overlay": "@vant/weapp/overlay/index",
+      "van-grid": "@vant/weapp/grid/index",
+      "van-grid-item": "@vant/weapp/grid-item/index",
+      "van-icon": "@vant/weapp/icon/index"
+  }
 }

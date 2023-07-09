@@ -18,6 +18,7 @@ Page({
     tipText: '正在鉴权...',
     pickers: {
       gender: ['公', '母'],
+      missing:[false, true],
       sterilized: [false, true],
       adopt: cat_status_adopt.map((x) => { return {desc: x} }),
       to_star: [false, true],

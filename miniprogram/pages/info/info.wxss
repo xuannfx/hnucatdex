@@ -28,12 +28,20 @@ page {
   margin-top: 30rpx;
 }
 
+/* 用户信息 */
+.avatar-wrapper, image.avatar {
+  width: 150rpx;
+  height: 150rpx;
+  padding: 0;
+  border: 0;
+}
+
 /* 下面是旧的 */
 
 .mina-info image {
   width: 150rpx;
   height: 150rpx;
-  border-radius: 20rpx;
+  border-radius: 75rpx;
   box-shadow: 0 0 10rpx var(--color-gray);
 }
 

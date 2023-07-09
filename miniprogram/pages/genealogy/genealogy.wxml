@@ -75,6 +75,7 @@
           </block>
           <view wx:if='{{item.adopt}}' class='adopt'>{{adopt_desc[item.adopt]}}</view>
           <view wx:if='{{item.to_star}}' class='to_star'>{{text_cfg.genealogy.to_star_tip}}</view>
+          <view wx:if='{{item.missing}}' class='to_star'>{{text_cfg.genealogy.missing_tip}}</view>
           <view class='popularity'>
             <image src='/pages/public/images/card/card/pop.png'></image>
             <text> {{item.popularity + (item.photo_count_total? item.photo_count_total * photoPopWeight: 0) }}</text>
@@ -123,7 +124,7 @@
 
 <!-- 漂浮的领养logo -->
 <view wx:if="{{adopt_count}}" id="find-adopt" bindtap="clickAdoptBtn">
-  <image class="logo shake" src="/pages/public/images/button/find_adopt.png"></image>
+  <image class="logo shake" src="/pages/public/images/button/find_adopt.gif"></image>
   <view class="count">{{adopt_count}}{{text_cfg.genealogy.adopt_btn}}</view>
 </view>
 <!-- 返回首页 -->

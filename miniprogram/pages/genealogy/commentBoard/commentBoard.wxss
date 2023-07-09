@@ -111,9 +111,7 @@ page {
   text-align: center;
   font-size: 28rpx;
   font-weight: bold;
-  background-color: var(--color-primary);
-  color: white;
-  border-radius: 50rpx;
+  color:var(--color-gray-max);
 }
 
 button.long {
@@ -122,4 +120,5 @@ button.long {
 
 button.primary {
   background-color: var(--color-primary);
+  color: var(--color-white);
 }

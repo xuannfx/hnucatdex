@@ -143,4 +143,19 @@ Page({
       title: '清理完成',
     })
   },
+
+  //用户手册
+  guide(e) {
+    wx.openEmbeddedMiniProgram({
+        appId: 'wxd45c635d754dbf59',
+        path: 'pages/detail/detail?url=https%3A%2F%2Fdocs.qq.com%2Fdoc%2FDWEJFbkFJTGJBbUd6',//此处链接需删除所复制路径中的.html
+        envVersion: 'release',
+        success(res) {
+          // 打开成功
+        },
+        fail: function (e) {
+          console.log(e)
+        }
+    })
+    },
 })

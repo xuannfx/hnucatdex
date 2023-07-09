@@ -51,7 +51,7 @@ Page({
     // 在页面onLoad回调事件中创建插屏广告实例
     if (wx.createInterstitialAd) {
       interstitialAd = wx.createInterstitialAd({
-        adUnitId: 'adunit-531fedfc9dcd52c3'
+        adUnitId: 'adunit-787b49ef51111fae'
       })
       interstitialAd.onLoad(() => {
         console.log("加载插屏广告成功");
@@ -164,7 +164,7 @@ Page({
       return;
     }
     wx.showLoading({
-      title: '翻阅猫谱中...',
+      title: '翻阅图鉴中...',
       mask: true
     });
     // 压缩图片

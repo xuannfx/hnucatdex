@@ -101,6 +101,7 @@ scroll-view {
   line-height: 30rpx;
   text-align: center;
   background-color: var(--color-primary);
+  color: var(--color-white);
   margin-left: 8rpx;
 }
 
@@ -110,8 +111,9 @@ scroll-view {
   font-size: 18rpx;
   line-height: 30rpx;
   text-align: center;
-  background-color: var(--color-gray-light);
-  
+  background-color: var(--color-gray-max);
+  color: var(--color-white);
+
   padding: 0 10rpx;
   margin: 0 10rpx;
 }
@@ -198,12 +200,12 @@ scroll-view {
   text-align: left;
   background-color: var(--color-primary);
   border-color: var(--color-primary-dark);
-  color: var(--color-black-light);
-  border-radius: 0 10rpx 10rpx 0;
+  color: var(--color-white);
+  border-radius: 0 0rpx 0rpx 0;
   padding: 10rpx;
   font-size: 22rpx;
   position: absolute;
-  top: 30rpx;
+  top: 35rpx;
   left: -17.5rpx;
   z-index: 1;
 }
@@ -359,7 +361,7 @@ scroll-view {
 }
 
 .f-column.main .item.active {
-  color: black;
+  color:var(--color-white);
   background-color: var(--color-primary);
   border-radius: 40rpx;
 }
@@ -420,7 +422,7 @@ scroll-view {
   align-items: center;
   flex-direction: column;
 
-  filter: drop-shadow(0 0 5rpx var(--color-gray-dark));
+  filter: drop-shadow(0px 12rpx 12rpx rgba(0, 0, 0, 0.15));
 }
 
 /* 返回首页 */
@@ -429,21 +431,24 @@ scroll-view {
   bottom: 200rpx;
   right: 30rpx;
 
-  filter: drop-shadow(0 0 5rpx var(--color-gray-dark));
+  filter: drop-shadow(0px 12rpx 12rpx rgba(0, 0, 0, 0.15));
 }
 
 #find-adopt .logo {
-  width: 99rpx;
-  height: 50rpx;
+  width: 100rpx;
+  height: 88rpx;
   display: block;
 }
 
 #find-adopt .count {
+  margin-top: 5rpx;
   font-size: 20rpx;
   padding: 1rpx 10rpx;
-  background-color: var(--color-primary);
-  border-radius: 5rpx;
-  color: var(--color-black-light);
+  background-color:white;
+  border-radius: 25rpx;
+  color:black;
+  letter-spacing: 1rpx;
+  border: 3rpx solid var(--color-primary);
 }
 
 .adopt-filter-tip {
