@@ -95,7 +95,7 @@
       <view class="item long" wx:if="{{is_manager || (cat.relations && cat.relations.length)}}">
         <view class="label">
           <view class='label-block'></view>
-          关系
+          猫际关系
         </view>
         <scroll-view scroll-x="1" class="relations">
           <view class="relation-block" wx:for="{{cat.relations}}" wx:key="_id" bindtap="toRelationCat" data-cat_id="{{item.cat._id}}" hover-class="tap">

@@ -63,7 +63,7 @@
   "window": {
     "backgroundColor": "#f7f7fa",
     "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#C70000",
+    "navigationBarBackgroundColor": "#e74e49",
     "navigationBarTitleText": "喵汪图鉴",
     "navigationBarTextStyle": "white"
   },
