@@ -141,7 +141,7 @@ module.exports = {
     // 开发团队页，pages/info/devTeam/devTeam
     dev_team: {
       share_tip: "开发团队",
-      team: "程序开发：中山大学：渔政、蓝卷、XD、zJ、ArcherJo、yw\n程序引进：2a.m.\n初期资料整理：2a.m.、晋不远、莫\n以及各校区、猫咖群的小伙伴~\n非常欢迎新朋友加入设计开发哇~！",
+      team: "程序开发（中山大学）：渔政、蓝卷、XD、zJ、ArcherJo、yw\n初期资料整理：2a.m.、晋不远、莫\n以及各校区、猫咖群的小伙伴~\n非常欢迎新朋友加入设计开发哇~！",
     },
     // 识猫页，pages/recognize/recognize
     recognize: {
