@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "badgeModal": "/components/badgeModal/badgeModal"
+  },
+  "navigationBarTitleText": "徽章口袋",
+  "backgroundColor": "#F7F7FA"
+}

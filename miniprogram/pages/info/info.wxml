@@ -16,7 +16,7 @@
     </view>
     <view class="num">
       <view class="num-title">{{numAllComments || '-'}}</view>
-      <text class='dev small'>条留言</text>
+      <text class='dev small'>张便利贴</text>
     </view>
   </view>
 
@@ -24,7 +24,7 @@
 
 <view class='buttons'>
   <image class='button' bindtap='clickbtn' data-to='/pages/info/reward/reward' src='/pages/public/images/info/btn/dashang.png'></image>
-  <image class='button' bindtap='clickbtn' data-to='/pages/info/photoRank/photoRank' src='/pages/public/images/info/btn/paizhao.png'></image>
+  <image class='button' bindtap='clickbtn' data-to='/pages/info/badge/badge' src='/pages/public/images/info/btn/badge.png'></image>
   <image class='button' bindtap='clickbtn' data-to='/pages/info/devTeam/devTeam' src='/pages/public/images/info/btn/tuandui.png'></image>
   <image class='button' bindtap='clickbtn' data-to='/pages/info/feedback/feedback' src='/pages/public/images/info/btn/fankui.png'></image>
 </view>
@@ -67,11 +67,13 @@
   <van-grid column-num="3" custom-class="option-box" border="{{ false }}" >
         <van-grid-item icon="description" text="管理员操作手册" text-class="option-text" bindtap='guide' dot />
         <van-grid-item icon="photo-o" text="照片审核" text-class="option-text" bindtap='clickbtn' data-to='/pages/manage/checkPhotos/checkPhotos' badge="{{numChkPhotos}}" />
+        <van-grid-item icon="smile-comment-o" text="便利贴审核" text-class="option-text" bindtap='clickbtn' data-to='/pages/manage/checkComment/checkComment' badge="{{numChkComments}}" />
         <van-grid-item icon="envelop-o" text="反馈处理" text-class="option-text" bindtap='clickbtn' data-to='/pages/manage/checkFeedbacks/checkFeedbacks' badge="{{numFeedbacks}}" />
         <van-grid-item icon="cluster-o" text="猫际关系管理" text-class="option-text" bindtap='clickbtn' data-to='/pages/manage/addRelations/addRelations' />
         <van-grid-item icon="edit" text="创建猫抓板公告" text-class="option-text" bindtap='clickbtn' data-to='/pages/news/createNews/createNews' />
         <van-grid-item icon="add-o" text="添加新猫" text-class="option-text" bindtap='clickbtn' data-to='/pages/manage/addCat/addCat' />
         <van-grid-item icon="manager-o" text="人员管理" text-class="option-text" bindtap='clickbtn' data-to='/pages/manage/managers/managers' />
+        <van-grid-item icon="medal-o" text="徽章管理" text-class="option-text" bindtap='clickbtn' data-to='/pages/manage/badgeDef/badgeDef' />
         <van-grid-item icon="share-o" text="特邀用户" text-class="option-text" bindtap='clickbtn' data-to='/pages/tools/inviteUser/inviteUser' />
         <van-grid-item icon="location-o" text="区域/花色管理" text-class="option-text" bindtap='clickbtn' data-to='/pages/manage/filters/filters' />
         <van-grid-item icon="newspaper-o" text="页面配置" text-class="option-text" bindtap='clickbtn' data-to='/pages/manage/pageSettings/pageSettings' />
