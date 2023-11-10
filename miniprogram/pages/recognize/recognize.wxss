@@ -48,6 +48,7 @@
   width: 300rpx;
   margin-top: 40rpx;
   background-color: var(--color-primary);
+  color: white;
   border-radius: 20rpx;
   font-size: 30rpx;
 }

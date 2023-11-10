@@ -212,7 +212,6 @@ Page({
   onReady() {
     // this.activateThread(0);
   },
-
   clickLike: async function clickLike(e) {
     if (this.jsData.like_mutex) {
       console.log("like lock");
@@ -319,7 +318,6 @@ Page({
       this.selectComponent('#photo-rank').reloadData();
     }
   },
-
   // 开始计算各个东西高度
   getHeights() {
     wx.getSystemInfo({
