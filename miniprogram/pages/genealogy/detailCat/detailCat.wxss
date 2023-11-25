@@ -160,6 +160,10 @@ swiper-item image {
   margin-right: 20rpx;
 }
 
+.badge-all + .badge-all {
+  margin-right: 20rpx;
+}
+
 .details {
   width: 630rpx;
   margin-top: 35rpx;
@@ -505,7 +509,8 @@ swiper-item image {
 .mask {
   width: 750rpx;
   height: 100vh;
-  background-color: var(--color-black-transparent);
+  background-color: var(--color-gray-dark);
+  opacity: 0.8;
   position: fixed;
   top: 0;
   z-index: 2;
@@ -542,7 +547,7 @@ swiper-item image {
 
 .user-badge-list {
   display: flex;
-  height: 360rpx;
+  height: 300rpx;
   flex-wrap: wrap;
 }
 
