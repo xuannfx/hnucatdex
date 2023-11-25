@@ -14,7 +14,7 @@
 }
 
 .tab-bar-border {
-  background-color: white;
+  background-color: #dddddd;
   position: absolute;
   left: 0;
   top: 0;
