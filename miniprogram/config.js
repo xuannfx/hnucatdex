@@ -5,7 +5,7 @@
 
 module.exports = {
   // 版本号
-  app_version: "v1.12.9",
+  app_version: "v1.12.11",
   // laf后台服务地址
   laf_url: 'https://ev4u61.laf.run',
   // laf后台服务地址（微信开发工具中），一般和上面laf_url一致就好
@@ -94,7 +94,7 @@ module.exports = {
       contract_title: "其他信息",
       contract_tip: "（选填）",
       submit_button: "提交反馈",
-      submit_tip: "*反馈内容仅后台工作人员可见",
+      submit_tip: "*反馈仅后台工作人员可见",
     },
     // 提交便利贴页，pages/genealogy/commentBoard/commentBoard
     comment_board: {

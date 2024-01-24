@@ -144,6 +144,7 @@ page {
 .right-arrow image {
   height: 20rpx;
   width: 20rpx;
+  filter: invert(100%);
 }
 
 button.option-text {
