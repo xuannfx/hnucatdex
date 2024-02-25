@@ -343,12 +343,6 @@ Page({
     });
   },
 
-  bindTapAdopt() {
-    wx.navigateTo({
-      url: '/pages/genealogy/adoptme/adoptme?cat_id=' + this.data.cat._id,
-    });
-  },
-
   bindAddPhoto() {
     wx.navigateTo({
       url: '/pages/genealogy/addPhoto/addPhoto?cat_id=' + this.data.cat._id,
@@ -626,11 +620,11 @@ Page({
   },
 
   //弹出层
-  showPopup() {
-    this.setData({ show: true });
+  showFunction() {
+    this.setData({ showFunc: true });
   },
-  onClose() {
-    this.setData({ show: false });
+  closeFunction() {
+    this.setData({ showFunc: false });
   },
   
   async loadUser() {

@@ -48,6 +48,7 @@
   width: 300rpx;
   margin-top: 40rpx;
   background-color: var(--color-primary);
+  color: var(--color-white);
   border-radius: 20rpx;
   font-size: 30rpx;
 }
@@ -185,6 +186,7 @@
 .bgImg{
   width: 100%;
   height: 1500rpx;
+  position: fixed;
 }
 
 .filter {
@@ -274,6 +276,7 @@
   line-height: 30rpx;
   text-align: center;
   background-color: var(--color-primary);
+  color: var(--color-white);
   margin-left: 8rpx;
 }
 

@@ -5,10 +5,7 @@ import { getCatItemMulti } from "../../../utils/cat";
 import { cloud } from "../../../utils/cloudAccess";
 import api from "../../../utils/cloudApi";
 
-var cat_id = undefined;
-
 const photoStep = 5; // 每次加载的图片数量
-var phers = {}; // 暂时存放摄影师名字
 
 Page({
   /**
@@ -28,12 +25,17 @@ Page({
     text_cfg: text_cfg
   },
 
+  jsData: {
+    cat_id: null,
+    phers: {}, // 暂时存放摄影师名字
+  },
+
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: async function (options) {
     await this.loadPickers();
-    cat_id = options.cat_id;
+    this.jsData.cat_id = options.cat_id;
     if (await checkAuth(this, 2)) {
       await this.loadCat();
     }
@@ -94,7 +96,7 @@ Page({
   // 检查权限
 
   async loadCat() {
-    if (cat_id===undefined) {
+    if (this.jsData.cat_id===undefined) {
       this.setData({
         cat: {
           nickname: [],
@@ -106,7 +108,7 @@ Page({
       return false;
     }
 
-    var cat = (await getCatItemMulti([cat_id], {nocache: true}))[0];
+    var cat = (await getCatItemMulti([this.jsData.cat_id], {nocache: true}))[0];
     console.log("[loadCat] -", cat);
     cat.mphoto = String(new Date(cat.mphoto));
     // 处理一下picker
@@ -136,7 +138,7 @@ Page({
 
   async reloadPhotos() {
     const only_best_photo = this.data.only_best_photo;
-    const qf = { cat_id: cat_id, verified: true, best: only_best_photo };
+    const qf = { cat_id: this.jsData.cat_id, verified: true, best: only_best_photo };
     const db = await cloud.databaseAsync();
     var photoRes = await db.collection('photo').where(qf).count();
     this.setData({
@@ -169,7 +171,7 @@ Page({
   },
 
   async loadMorePhotos() {
-    if (cat_id === undefined) {
+    if (this.jsData.cat_id === undefined) {
       // 新猫，没有照片
       return false;
     }
@@ -181,7 +183,7 @@ Page({
     }
 
     const only_best_photo = this.data.only_best_photo;
-    const qf = { cat_id: cat_id, verified: true, best: only_best_photo };
+    const qf = { cat_id: this.jsData.cat_id, verified: true, best: only_best_photo };
     const now = photo.length;
 
     const db = await cloud.databaseAsync();
@@ -316,17 +318,17 @@ Page({
     });
     var res = (await api.updateCat({
       cat: this.data.cat,
-      cat_id: cat_id
+      cat_id: this.jsData.cat_id
     })).result;
     console.log("updateCat res:", res);
     if (res.id) {
-      cat_id = res.id;
+      this.jsData.cat_id = res.id;
     }
     wx.showToast({
       title: '操作成功',
     });
     // 刷新缓存
-    await getCatItemMulti([cat_id], {nocache: true});
+    await getCatItemMulti([this.jsData.cat_id], {nocache: true});
   },
   async deletePhoto(e) {
     console.log("[deletePhoto] -", e);
@@ -396,13 +398,13 @@ Page({
   inputPher(e) {
     const input = e.detail.value;
     const pid = e.currentTarget.dataset.pid;
-    phers[pid] = input;
+    this.jsData.phers[pid] = input;
   },
   async updatePher(e) {
     const photo = e.currentTarget.dataset.photo;
     const index = e.currentTarget.dataset.index;
     const pid = photo._id;
-    const photographer = phers[pid];
+    const photographer = this.jsData.phers[pid];
     await api.managePhoto({
       type: "setPher",
       photo: photo,

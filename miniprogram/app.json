@@ -29,7 +29,6 @@
     "pages/manage/addRelations/addRelations",
     "pages/tools/updateUserRole/updateUserRole",
     "pages/leaderboard/leaderboard",
-    "pages/genealogy/adoptme/adoptme",
     "pages/manage/pageSettings/pageSettings",
     "pages/tools/inviteUser/inviteUser",
     "pages/info/userInfo/modifyUserInfo/modifyUserInfo",

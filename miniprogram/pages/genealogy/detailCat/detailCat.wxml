@@ -180,24 +180,24 @@
   <!-- album end -->
 
   <!--功能弹出层-->
- <view class="plus" bindtap='showPopup'>
+ <view class="plus" bindtap='showFunction'>
  <image class="icon" src='/pages/public/images/button/plus.png'></image>
  </view>
  <van-popup
-   show="{{ show }}"
+   show="{{ showFunc }}"
    round
    position="bottom"
    custom-style="height: auto; z-index=999"
-   bind:close="onClose"
+   bind:close="closeFunction"
    close-icon="arrow-down">
-     <view class="withdrawbtn" bindtap="onClose">
+     <view class="withdrawbtn" bindtap="closeFunction">
          <image class="withdraw" src="/pages/public/images/button/withdraw.png"></image>
      </view>
      <view class="buttons"> 
-         <view class="button" bindtap='bindTapAdopt' wx:if='{{cat.adopt == 2}}' >
+        <!-- <view class="button" bindtap='bindTapAdopt' wx:if='{{cat.adopt == 2}}' >
          <image class="icon" src='/pages/public/images/button/adopt.png'></image>
          <view class="button-text">领养猫咪</view>
-         </view>
+         </view>-->
          <view class="button" bindtap='toComment'>
          <image class="icon" src='/pages/public/images/button/comment.png'></image>
          <view class="button-text">{{text_cfg.detail_cat.label_comment_board}}</view>
