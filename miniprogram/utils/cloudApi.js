@@ -143,6 +143,13 @@ async function loadBadgeCode(options) {
   });
 }
 
+async function getUserStats(options) {
+  return await cloud.callFunction({
+    name: "getUserStats",
+    data: options
+  });
+}
+
 module.exports = {
   curdOp,
   userOp,
@@ -158,4 +165,5 @@ module.exports = {
   giveBadge,
   genBadgeCode,
   loadBadgeCode,
+  getUserStats,
 };
