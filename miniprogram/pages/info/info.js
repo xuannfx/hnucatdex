@@ -12,12 +12,147 @@ Page({
   data: {
     logo_img,
     friendApps: [],
-    showManager: false,
-    numChkPhotos: 0,
-    numFeedbacks: 0,
-    numImProcess: 0,
     friendLinkImgLoaded:false,
     text_cfg: text_cfg,
+
+    // 卡片
+    cards: [
+      {
+        icon:"/pages/public/images/info/btn/dashang.png",
+        label:"投喂罐头",
+        path:"/pages/info/reward/reward",
+      },{
+        icon:"/pages/public/images/info/btn/badge.png",
+        label:"徽章口袋",
+        path:"/pages/info/badge/badge",
+      },{
+        icon:"/pages/public/images/info/btn/tuandui.png",
+        label:"开发团队",
+        path:"/pages/info/devTeam/devTeam",
+      },{
+        icon:"/pages/public/images/info/btn/fankui.png",
+        label:"信息反馈",
+        path:"/pages/info/feedback/feedback",
+      }
+    ],
+
+    nums: {},  // 菜单栏的各个数量
+    // 菜单栏是否显示的条件
+    showCond: {
+      tools: true,
+      dev: false,
+      manager: false,
+    },
+    // 菜单列表
+    menuList: [
+      {
+        title: "常用工具",
+        show: "tools",
+        items: [
+          {
+            name: "个人信息修改",
+            path: "/pages/info/userInfo/modifyUserInfo/modifyUserInfo"
+          },
+          {
+            name: "清理缓存",
+            path: "clearCache"
+          }
+        ],
+      }, {
+        title: "开发者工具（手机端不显示）",
+        show: "dev",
+        items: [
+          {
+            name: "部署指引",
+            path: "/pages/debug/deployTip/deployTip",
+          },
+          {
+            name: "生成秘钥",
+            path: "/pages/debug/genKeys/genKeys",
+          },],
+      }, {
+        title: "管理后台",
+        show: "manager",
+        items: [
+          {
+            name: "操作手册",
+            path: "guide",
+            icon: "icon-description",
+            dot: "true"
+          },
+          {
+            name: "照片审核",
+            path: "/pages/manage/checkPhotos/checkPhotos",
+            num: "numChkPhotos",
+            icon: "icon-photo-o"
+          },
+          {
+            name: "便利贴审核",
+            path: "/pages/manage/checkComment/checkComment",
+            num: "numChkComments",
+            icon: "icon-smile-comment-o"
+          },
+          {
+            name: "反馈处理",
+            path: "/pages/manage/checkFeedbacks/checkFeedbacks",
+            num: "numFeedbacks",
+            icon: "icon-envelop-o"
+          },
+          {
+            name: "猫抓板公告",
+            path: "/pages/news/createNews/createNews",
+            icon: "icon-edit"
+          },
+          {
+            name: "校区/区域/花色",
+            path: "/pages/manage/filters/filters",
+            icon: "icon-location-o"
+          },
+          {
+            name: "添加新猫",
+            path: "/pages/manage/addCat/addCat",
+            icon: "icon-add-o"
+          },
+          {
+            name: "猫猫关系",
+            path: "/pages/manage/addRelations/addRelations",
+            icon: "icon-cluster-o"
+          },
+          {
+            name: "人员管理",
+            path: "/pages/manage/managers/managers",
+            icon: "icon-manager-o"
+          },
+          {
+            name: "特邀用户",
+            path: "/pages/tools/inviteUser/inviteUser",
+            icon: "icon-star-o"
+          },
+          {
+            name: "徽章管理",
+            path: "/pages/manage/badgeDef/badgeDef",
+            icon: "icon-medel-o"
+          },
+          {
+            name: "页面配置",
+            path: "/pages/manage/pageSettings/pageSettings",
+            icon: "icon-newspaper-o"
+          },
+          {
+            name: "投喂记录",
+            path: "/pages/manage/rewards/rewards",
+            icon: "icon-balance-o"
+          },
+          {
+            name: "照片处理",
+            path: "/pages/manage/imProcess/imProcess",
+            num: "numImProcess",
+            icon: "icon-todo-list-o"
+          },
+        ]
+      }
+    ],
+
   },
 
   /**
@@ -27,7 +162,7 @@ Page({
     // 开发模式
     const sysInfo = wx.getSystemInfoSync();
     this.setData({
-      devMode: sysInfo.platform === "devtools"
+      "showCond.dev": sysInfo.platform === "devtools"
     });
 
     const db = await cloud.databaseAsync();
@@ -63,16 +198,24 @@ Page({
     const allPhotoQf = { verified: true, photo_id: /^((?!\.heic$).)*$/i };
     // 所有便利贴数量
     const allCommentQf = { deleted: _.neq(true), needVerify: _.neq(true) };
+    // 所有绝育量
+    const sterilizedQf = { sterilized: true };
 
-    let [numAllCats, numAllPhotos, numAllComments] = await Promise.all([
+    let [numAllCats, numAllPhotos, numAllComments, numsterilized] = await Promise.all([
       db.collection('cat').where(allCatQf).count(),
       db.collection('photo').where(allPhotoQf).count(),
       db.collection('comment').where(allCommentQf).count(),
+      db.collection('cat').where(sterilizedQf).count(),
     ]);
+
+    // 计算绝育率
+    const sterilizationRate = (numsterilized.total / numAllCats.total * 100).toFixed(1);
+
     this.setData({
       numAllCats: numAllCats.total,
       numAllPhotos: numAllPhotos.total,
       numAllComments: numAllComments.total,
+      sterilizationRate: sterilizationRate + '%',
     });
 
     if (!await isManagerAsync()) {
@@ -88,11 +231,11 @@ Page({
       db.collection('photo').where(imProcessQf).count(),
     ]);
     this.setData({
-      numChkPhotos: numChkPhotos.total,
-      numChkComments: numChkComments.total,
-      numFeedbacks: numFeedbacks.total,
-      numImProcess: numImProcess.total,
-      showManager: true,
+      "nums.numChkPhotos": numChkPhotos.total,
+      "nums.numChkComments": numChkComments.total,
+      "nums.numFeedbacks": numFeedbacks.total,
+      "nums.numImProcess": numImProcess.total,
+      "showCond.manager": true,
     });
   },
 
@@ -115,6 +258,10 @@ Page({
     const to = e.currentTarget.dataset.to;
     if (!to) {
       return false;
+    }
+    if (to == "clearCache") {
+      // 清理缓存
+      return this.clearCache();
     }
     wx.navigateTo({
       url: to,

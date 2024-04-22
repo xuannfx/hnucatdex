@@ -14,18 +14,54 @@ page {
   padding: 40rpx 0 15rpx 0;
 }
 
-.buttons {
+.card-container {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  padding: 0 6rpx;
 }
 
-.buttons .button {
-  width: 330rpx;
-  height: 182rpx;
-  border-radius: 15rpx;
-  box-shadow: 0rpx 0rpx 10rpx var(--color-gray-light);
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: calc(50% - 15rpx);
+  height: 180rpx;
+  border-top-right-radius: 15rpx;
+  border-top-left-radius: 15rpx;
+  border-bottom-right-radius: 10rpx;
+  border-bottom-left-radius: 10rpx;
   margin-top: 30rpx;
+  box-shadow: 1rpx 1rpx 5rpx rgba(0, 0, 0, 0.1);
+  background-color: white;
+}
+.card:after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 10rpx;
+  border-bottom-right-radius: 10rpx;
+  border-bottom-left-radius: 10rpx;
+  background-color: var(--color-primary);
+}
+
+.icon {
+  width: 100rpx;
+  height: 100rpx;
+  margin-bottom:0rpx;
+}
+.card-text {
+  width: 100%;
+  font-size: 25rpx;
+  text-align: center;
+  white-space: nowrap;
+  font-weight: bolder;
+  letter-spacing: 3rpx;
+  color: var(--color-black-light);
 }
 
 /* 用户信息 */
@@ -165,27 +201,104 @@ button.option-text::after {
   border: none;
 }
 
-/* 各项数据 */
-.num-info{
+/* grid */
+.grid {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  margin-top: 10rpx;
+  justify-content: flex-start;
 }
 
-.num{ 
+.grid-item {
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 33.33%; /* 三列宫格 */
+  box-sizing: border-box;
+  padding: 10px;
+}
+
+.item-container {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.grid-text {
+  width: 100%;
+  font-size: 25rpx;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.iconfont {
+  font-family: 'iconfont';
+  font-size: 55rpx;
+}
+
+.badge {
+  position: absolute;
+  text-align: center;
+  top: 6rpx;
+  right: -14rpx;
+  min-width: 26rpx;
+  height: 26rpx;
+  line-height: 26rpx;
+  border-radius: 16rpx;
+  background-color: red;
+  color: white;
+  font-size: 19rpx;
+  font-weight: bold;
+  overflow: hidden;
+  white-space: nowrap;
+  border: 3rpx solid white;
+}
+
+.dot {
+  position: absolute;
+  top: 15rpx;
+  right: -9rpx;
+  width: 11rpx;
+  height: 11rpx;
+  background-color: red;
+  border-radius: 50%;
+}
+
+/* 各项数据 */
+.num-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10rpx 0 0rpx 0;
+  width: 100%;
+}
+
+.num {
+  display: flex;
+  flex: 1; /* 平分宽度 */
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  white-space: nowrap;
-  padding:0 80rpx 0 80rpx;
+  padding: 0 40rpx;
   height: 60rpx;
+  box-sizing: border-box;
+  position: relative;
 }
 
-.num-title{
+.num:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%);
+  height: 60%; /* 调整边框长度为.num高度的80% */
+  width: 1rpx;
+  background-color: #d3d3d3;
+}
+
+.num-title {
   margin-bottom: -10rpx;
-  width: 100%;
   font-size: 25rpx;
   text-align: center;
   white-space: nowrap;
