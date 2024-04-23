@@ -35,7 +35,7 @@
 
 
   <view wx:if='{{showSearchCat || showSearchType}}' class="search-mask" bindtap="bindSearch" data-type="hide"></view>
-  <view id='search' class='{{showSearchCat || showSearchType ? "": "hidden"}}'>
+  <popup id='search' show="{{showSearchCat || showSearchType}}" bind:close="hideSearch">
     <block wx:if="{{showSearchCat}}">
       <view class='input-block'>
         <view class='input-icon'>
@@ -71,7 +71,7 @@
         </view>
       </scroll-view>
     </block>
-  </view>
+  </popup>
 </block>
 <view wx:else class="unAuth">
   <text>{{tipText}}</text>

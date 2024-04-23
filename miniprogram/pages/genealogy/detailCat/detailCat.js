@@ -796,4 +796,7 @@ Page({
     };
     this.setData({modal});
   },
+  hideBadgeModal() {
+    this.triggerEvent('close');
+  }
 })

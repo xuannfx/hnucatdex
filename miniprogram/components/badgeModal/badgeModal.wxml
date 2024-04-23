@@ -1,6 +1,6 @@
 <!--components/badgeModal/badgeModal.wxml-->
-<view class="mask" bindtap="hide" hidden="{{!show}}" style="z-index: {{zindex}};"></view>
-<view class="modal badge-level-{{level}}" style="z-index: {{zindex}};" hidden="{{!show}}">
+<mask style="z-index: 1;" show="{{show}}" bind:close="hide">
+<view class="modal {{show ? '' : 'hidden'}} badge-level-{{level}}" style="z-index: {{zindex}};">
   <view class="title">{{title}}</view>
   <view class="close-btn" bindtap="hide">x</view>
   <image class="badge-img" src="{{img}}" mode="aspectFill"/>
@@ -18,3 +18,4 @@
   <view class="desc">{{desc}}</view>
   <view class="tip">{{tip}}</view>
 </view>
+</mask>

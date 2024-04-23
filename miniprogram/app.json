@@ -85,6 +85,5 @@
   "lazyCodeLoading": "requiredComponents",
   "embeddedAppIdList": ["wxebadf544ddae62cb","wxd45c635d754dbf59"],
   "usingComponents": {
-      "van-overlay": "@vant/weapp/overlay/index"
   }
 }
