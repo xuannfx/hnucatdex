@@ -169,11 +169,11 @@
       ]
     }
   },
+  "appid": "wxc91fb069737b7b84",
+  "projectname": "hnucatdex",
+  "libVersion": "2.24.7",
   "packOptions": {
     "ignore": [],
     "include": []
-  },
-  "appid": "wxc91fb069737b7b84",
-  "projectname": "zhongdamaopu",
-  "libVersion": "2.24.7"
+  }
 }

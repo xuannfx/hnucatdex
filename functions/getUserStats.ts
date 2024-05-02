@@ -11,7 +11,7 @@ export default async function (ctx: FunctionContext) {
   const db = cloud.database();
   const _ = db.command;
   const $ = db.command.aggregate;
-  const { openid } = ctx.user;
+  const openid = ctx.user?.openid;;
 
   // 定义查询条件
   const userPhotoQf = { _openid: openid, verified: true, photo_id: /^((?!\.heic$).)*$/i };
@@ -29,7 +29,7 @@ export default async function (ctx: FunctionContext) {
         totalLikes: $.sum('$like_count')
       })
       .end()
-      .then(aggregationResult => aggregationResult.data.length > 0 ? aggregationResult.data[0].totalLikes : 0) // 直接处理聚合结果
+      .then(aggregationResult => aggregationResult.data.length > 0 ? aggregationResult.data[0].totalLikes : 0)
   ]);
 
   // 所有结果
