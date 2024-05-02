@@ -10,11 +10,11 @@ Page({
     text_cfg: text_cfg,
     github_link: "https://github.com/sysucats/zhongdamaopu",
     update_log: [{
-      version: "v1.12.12.a",
+      version: "v1.12.13",
       content: [
-        "重写一些ui",
+        "	更新infoUI & 其他组件",
       ],
-      time: "2024/04/24"
+      time: "2024/05/02"
     }, {
       version: "v1.12.12",
       content: [
