@@ -160,10 +160,6 @@ swiper-item image {
   margin-right: 20rpx;
 }
 
-.badge-all + .badge-all {
-  margin-right: 20rpx;
-}
-
 .details {
   width: 630rpx;
   margin-top: 35rpx;
@@ -509,16 +505,6 @@ swiper-item image {
 }
 
 /* 赠予徽章 */
-.mask {
-  width: 750rpx;
-  height: 100vh;
-  background-color: var(--color-black-transparent);
-  transition: 0.5s ease-in;
-  position: fixed;
-  top: 0;
-  z-index: 2;
-}
-
 .search {
   width: 750rpx;
   background-color: var(--color-white-dark);

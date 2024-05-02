@@ -31,12 +31,5 @@
     "tencentcloud-sdk-nodejs": "4.0.571",
     "validator": "^13.7.0",
     "ws": "^8.11.0"
-  },
-  "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC"
+  }
 }
