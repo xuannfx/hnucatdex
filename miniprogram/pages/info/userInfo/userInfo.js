@@ -24,16 +24,16 @@ Page({
             icon:"icon-edit",
             action:"editProfile",
             btnAble: false,
-          },{
+          }, {
             label:"邀请好友",
             icon:"icon-friends-o",
             action:"shareApp",
             btnAble: true,
             btnType: "share",
-          },{
-            label:"给小猫们买个罐头",
-            icon:"icon-balance-o",
-            action:"/pages/info/reward/reward",
+          }, {
+            label:"信息反馈",
+            icon:"icon-envelop-o",
+            action:"/pages/info/feedback/feedback",
             btnAble: false,
           },
         ]
@@ -51,7 +51,7 @@ Page({
             action:"handleContact",
             btnAble: true,
             btnType: "contact",
-          },
+          }
         ]
       }
     ],

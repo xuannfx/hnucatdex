@@ -181,7 +181,7 @@
 
   <!--功能弹出层-->
  <view class="plus" bindtap='showFunction'>
-    <image class="icon" src='/pages/public/images/button/plus.png'></image>
+    <image class="icon" src='/pages/public/images/button/plus.svg'></image>
  </view>
  <popup show="{{showFunc}}" bind:close="closeFunction">
     <view class="withdrawbtn" bindtap="closeFunction">
@@ -189,11 +189,11 @@
       </view>
       <view class="buttons"> 
           <view class="button" bindtap='toComment'>
-            <image class="icon" src='/pages/public/images/button/comment.png'></image>
+            <image class="icon" src='/pages/public/images/button/comment.svg'></image>
             <view class="button-text">{{text_cfg.detail_cat.label_comment_board}}</view>
           </view>
           <view class="button" bindtap='bindAddPhoto' >
-            <image class="icon" src='/pages/public/images/button/addPhoto.png'></image>
+            <image class="icon" src='/pages/public/images/button/addPhoto.svg'></image>
             <view class="button-text">上传喵照</view>
           </view>
       </view>
