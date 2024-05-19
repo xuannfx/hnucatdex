@@ -220,13 +220,12 @@ async function checkAuth(page, level) {
 
 // 去设置用户信息页
 function toSetUserInfo() {
-  const url = "/pages/info/userInfo/modifyUserInfo/modifyUserInfo";
+  const url = "/pages/info/userInfo/userInfo";
   console.log(url);
   wx.navigateTo({
     url: url,
   })
 }
-
 
 // 设置用户等级
 async function setUserRole(openid, role) {

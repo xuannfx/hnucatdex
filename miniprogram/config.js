@@ -5,7 +5,7 @@
 
 module.exports = {
   // 版本号
-  app_version: "v1.12.12",
+  app_version: "v1.13.1",
   // laf后台服务地址
   laf_url: 'https://ev4u61.laf.run',
   // laf后台服务地址（微信开发工具中），一般和上面laf_url一致就好
