@@ -60,6 +60,7 @@
   </view>
 </block>
 
+<!-- 宫格式布局，待处理数量右上角红点标记 -->
 <block wx:for="{{menuList}}" wx:key="title" wx:for-item="menu" wx:if="{{showCond[menu.show]}}">
   <view wx:if="{{menu.title == '管理后台'}}" class='block-name'>{{menu.title}}</view>
     <view wx:if="{{menu.title == '管理后台'}}" class="block">

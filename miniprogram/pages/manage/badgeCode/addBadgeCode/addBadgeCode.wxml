@@ -1,3 +1,4 @@
+<!-- 改成view以便使用modifyUserInfo.wxss改后的样式 -->
 <view class="editInfo" wx:if="{{auth}}">
   <view class="top-margin-100"></view>
 

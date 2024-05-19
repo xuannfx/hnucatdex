@@ -1,3 +1,4 @@
+<!-- 换成统一的popup组件 -->
 <popup show="{{show}}" bind:close="hide">
   <view class="editInfo">
     <view class="label-small">头像</view>

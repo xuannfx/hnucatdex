@@ -143,9 +143,18 @@ async function loadBadgeCode(options) {
   });
 }
 
+// 查询用户个人数据接口
 async function getUserStats(options) {
   return await cloud.callFunction({
     name: "getUserStats",
+    data: options
+  });
+}
+
+// 更新一只猫的评分
+async function updateCatRating(options) {
+  return await cloud.callFunction({
+    name: "updateCatRating",
     data: options
   });
 }
@@ -166,4 +175,5 @@ module.exports = {
   genBadgeCode,
   loadBadgeCode,
   getUserStats,
+  updateCatRating,
 };

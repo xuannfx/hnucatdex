@@ -33,6 +33,8 @@
   </scroll-view>
   <button wx:if="{{cat._id}}" class="primary" bindtap="saveRelations">保存</button>
 
+
+  <!-- 换成统一的popup组件 -->
   <popup id='search' show="{{showSearchCat || showSearchType}}" bind:close="hideSearch">
     <block wx:if="{{showSearchCat}}">
       <view class='input-block'>

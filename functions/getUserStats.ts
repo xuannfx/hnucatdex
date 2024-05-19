@@ -29,7 +29,7 @@ export default async function (ctx: FunctionContext) {
         totalLikes: $.sum('$like_count')
       })
       .end()
-      .then(aggregationResult => aggregationResult.data.length > 0 ? aggregationResult.data[0].totalLikes : 0)
+      .then(aggregationResult => aggregationResult.data.length > 0 ? aggregationResult.data[0].totalLikes : 0) // 直接处理聚合结果
   ]);
 
   // 所有结果
