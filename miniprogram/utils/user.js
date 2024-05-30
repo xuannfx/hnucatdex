@@ -218,9 +218,10 @@ async function checkAuth(page, level) {
   return false;
 }
 
-// 去设置用户信息页
+// 去设置用户信息页，上传照片时点更新个人信息改为了跳出组件
+// 不过貌似有些地方不能用组件，不太确定跳出组件或者跳转到页面哪种比较好
 function toSetUserInfo() {
-  const url = "/pages/info/userInfo/userInfo";
+  const url = "/pages/info/userInfo/userInfo"; 
   console.log(url);
   wx.navigateTo({
     url: url,
