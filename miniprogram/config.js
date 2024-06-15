@@ -5,7 +5,7 @@
 
 module.exports = {
   // 版本号
-  app_version: "v1.13.3",
+  app_version: "v1.14.0",
   // laf后台服务地址
   laf_url: 'https://ev4u61.laf.run',
   // laf后台服务地址（微信开发工具中），一般和上面laf_url一致就好
@@ -85,6 +85,8 @@ module.exports = {
       label_comment_board: "便利贴墙",
       sterilized_true: "已绝育",
       sterilized_false: "待绝育",
+      slogan1: "它们的点点滴滴，由你来记录",
+      slogan2: "扫右方小程序码了解更多~",
     },
     // 提交反馈页，pages/genealogy/feedbackDetail/feedbackDetail
     feedback_detail: {
@@ -177,20 +179,6 @@ module.exports = {
       expired_tip: "邀请链接已过期...请联系管理员~",
       already_tip: "你已经是特邀用户啦~",
       success_tip: "`已成为特邀用户~",
-    },
-    // 领养页，pages/genealogy/adopt/adopt
-    adopt: {
-      share_tip: "领养猫咪",
-      adopt_tip_title: "领养咨询",
-      adopt_tip: "有意领养猫咪者可填写以下内容后点击提交申请，若此猫咪未有意向领养人，我们会主动联系你进一步询问相关信息~\n或点击下方按钮直接与我们的客服联系",
-      requirement_title: "领养须知",
-      requirement_tip: "我们希望您具备以下基本条件：\n①有独立居住场所及经济条件；\n②有足够爱心、耐心、责任心；\n③希望能够积极交流，有效沟通；\n④参与领养审核、签订领养协议、领养后回访",
-      further_tip:"*详细条件请等我们进行联系后告知",
-      apply_title:"备注内容",
-      apply_tip:"请简要陈述您的大致位置、是否有独立居所、养猫经验、家中是否有原住民等基本情况~",
-      contract_tip:"（必填）微信/QQ/邮箱/电话等~",
-      submit_button:"提交申请",
-      submit_tip:"*提交内容仅后台工作人员可见"
     },
   }
 }
