@@ -45,8 +45,11 @@
   font-weight: bold;
 }
 
+button.primary::after {
+  border: none;
+}
 button.primary {
-  border-radius: 40rpx;
+  border-radius: 100rpx;
   background-color: var(--color-primary);
   color: var(--color-white);
   width: 500rpx;

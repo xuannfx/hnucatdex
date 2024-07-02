@@ -1,0 +1,157 @@
+/* pages/followFeed/followFeed.wxss */
+@import "../public/wxss/hFilter.wxss";
+@import '../genealogy/commentBoard/commentBoard.wxss';
+
+
+#comment-list {
+  width: 750rpx;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
+/* 一组照片 */
+.photo-block, .comment-block {
+  width: 100%;
+  margin-top: 30rpx;
+  box-sizing: border-box;
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0 30rpx 30rpx 30rpx;
+  border-bottom: 1rpx solid var(--color-gray);
+}
+
+.comment-block {
+  justify-content: center;
+}
+
+.cat-info {
+  width: 100%;
+  height: 70rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 10rpx;
+}
+
+.cat-info .cat-avatar {
+  width: 60rpx;
+  height: 60rpx;
+}
+
+.photo-img image, .cat-avatar image, .user-info image {
+  width: 100%;
+  height: 100%;
+}
+.cat-avatar image, .user-info image {
+  border-radius: 50%;
+}
+
+.cat-info .cat-name {
+  font-size: 28rpx;
+  color: var(--color-black-light);
+  margin-left: 10rpx;
+  display: flex;
+  flex-direction: column;
+}
+.cat-info .cat-campus {
+  font-size: 18rpx;
+  color: var(--color-gray-dark);
+  align-items: center;
+  display: flex;
+}
+.location-logo {
+  width: 24rpx;
+  height: 24rpx;
+  margin-right: 4rpx;
+}
+
+/* 照片卡 */
+.photo-grid {
+  box-sizing: border-box;
+  width: 33.3%;
+  padding: 10rpx;
+}
+.single-photo {
+  width: 100%; /* 单列布局时的宽度 */
+}
+
+.photo {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  width: 100%;
+  border-radius: 15rpx;
+  overflow: hidden;
+  padding-bottom: 10rpx;
+}
+
+.photo-img {
+  width: 100%;
+  height: 240rpx;
+  background-image: var(--img-default);
+  background-size: 50%;
+  background-repeat: no-repeat;
+  background-position: center center;
+  
+}
+
+.photo .datetime {
+  width: 100%;
+  text-align: center;
+}
+
+.user-info {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.user-info .user-avatar {
+  margin-left: 20rpx;
+  width: 40rpx;
+  height: 40rpx;
+}
+
+.user-info .username {
+  width: 60%;
+  height: 40rpx;
+  font-size: 20rpx;
+  line-height: 40rpx;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+
+/* 未关注提醒 */
+.noFollow {
+  width: 100%;
+  text-align: center;
+  color: var(--color-gray-max);
+}
+
+.noFollow image {
+  width: 100rpx;
+  height: 100rpx;
+}
+
+/* 底部加载 */
+.loading image {
+  width: 165.9rpx;
+  height: 90.3rpx;
+  margin: 10rpx 292rpx 200rpx 292rpx;
+}
+.loadnomore image {
+  width: 750rpx;
+  height: 100rpx;
+  margin: 10rpx 0 200rpx 0;
+}
+.loadnomore {
+  font-size: 24rpx;
+  text-align: center;
+  color: var(--color-gray-dark);
+}
