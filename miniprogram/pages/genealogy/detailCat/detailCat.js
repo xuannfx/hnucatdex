@@ -24,6 +24,7 @@ import {
   getGlobalSettings
 } from "../../../utils/page";
 import { convertRatingList, genDefaultRating } from "../../../utils/rating";
+import { showMpcode } from "../../../utils/mpcode";
 import {
   cloud
 } from "../../../utils/cloudAccess";
@@ -33,6 +34,8 @@ import api from "../../../utils/cloudApi";
 import { loadUserBadge, loadBadgeDefMap, loadCatBadge, mergeAndSortBadges, } from "../../../utils/badge";
 
 const no_heic = /^((?!\.heic$).)*$/i; // 正则表达式：不以 HEIC 为文件后缀的字符串
+
+const max_follow_cats = 30; // 最大的猫猫关注数量
 
 // 获取照片的排序功能
 const photoOrder = [{
@@ -243,6 +246,7 @@ Page({
     await Promise.all([
       this.reloadPhotos(),
       this.loadCommentCount(),
+      this.loadFollowCount(),
       this.loadRelations(),
       this.reloadCatBadge(),
     ]);
@@ -296,10 +300,21 @@ Page({
   },
 
   async loadCommentCount() {
-    const that = this;
-
-    that.setData({
+    this.setData({
       "cat.comment_count": await getCatCommentCount(this.jsData.cat_id)
+    });
+  },
+
+  async loadFollowCount() {
+    const db = await cloud.databaseAsync();
+    const _ = db.command;
+    const { cat_id } = this.jsData;
+    const {total} = (await db.collection('user').where({
+      followCats: _.elemMatch(_.eq(cat_id))
+    }).count())
+
+    this.setData({
+      "cat.follow_count": total
     });
   },
 
@@ -554,50 +569,14 @@ Page({
   },
 
   // 展示mpcode
-  async bingMpTap(e) {
-    // 直接显示
-    if (this.data.cat.mpcode) {
-      wx.previewImage({
-        urls: [this.data.cat.mpcode],
-      });
-      return false;
-    }
-    // 如果目前没有，那就先生成一个，再显示
-    console.log('[bingMpTap] - 生成mpcode');
-    wx.showLoading({
-      title: '生成ing...',
-    })
-    const cat = this.data.cat;
-    var res = (await api.getMpCode({
-      _id: cat._id,
-      scene: 'toC=' + cat._no,
-      page: 'pages/genealogy/genealogy',
-      width: 500,
-    })).result;
-
-    console.log("mpcode:", res);
-
-    res = await cloud.signCosUrl(res);
-
-    wx.hideLoading();
-    wx.previewImage({
-      urls: [res],
-    });
-    this.setData({
-      'cat.mpcode': res
-    });
+  async bingMpTap() {
+    await showMpcode(this.data.cat);
   },
 
-  showPopularityTip() {
+  showPopTip(e) {
+    let { tip } = e.currentTarget.dataset;
     wx.showToast({
-      title: config.text.detail_cat.popularity_tip,
-      icon: "none"
-    });
-  },
-
-  showCommentTip() {
-    wx.showToast({
-      title: config.text.detail_cat.comment_tip,
+      title: tip,
       icon: "none"
     });
   },
@@ -656,8 +635,16 @@ Page({
     if (!user.userInfo) {
       user.userInfo = {};
     }
+    // 处理关注
+    let followedCat;
+    if (!user.followCats || !user.followCats.includes(this.data.cat._id)) {
+      followedCat = false;
+    } else {
+      followedCat = true;
+    }
     this.setData({
-      user: user
+      user,
+      followedCat
     });
   },
 
@@ -733,7 +720,7 @@ Page({
   // 点击获取徽章
   async toGetBadge(e) {
     wx.navigateTo({
-      url: '/pages/info/badge/badge',
+      url: '/pages/packageA/pages/info/badge/badge',
     });
   },
 
@@ -826,5 +813,51 @@ Page({
     this.setData({
       showDetailRating: !showDetailRating,
     });
+  },
+
+  // 展示分享海报
+  async showPoster() {
+    // 关掉弹窗
+    this.closeFunction();
+    
+    let posterComponent = this.selectComponent('#posterComponent');
+    if (posterComponent) {
+      posterComponent.startDrawing();
+    }
+  },
+
+  async followCat() {
+    if (this.jsData.updatingFollowCats) {
+      return;
+    }
+
+    // 如果关注过多，禁止再继续新增关注
+    let { followCats } = this.data.user;
+    if (followCats && followCats.length > max_follow_cats) {
+      wx.showModal({
+        title: '关注已满',
+        content: `最多关注${max_follow_cats}只猫猫，请到关于页-个人中心管理已关注的猫猫。`,
+      });
+      return false;
+    }
+
+    this.jsData.updatingFollowCats = true;
+
+    let { followedCat } = this.data;
+    let res = await api.updateFollowCats({
+      updateCmd: followedCat ? "del" : "add",
+      catId: this.data.cat._id,
+    })
+
+    await Promise.all([
+      await this.loadUser(),
+      await this.loadFollowCount(),
+    ]);
+
+    wx.showToast({
+      title: `${followedCat ? "取关" : "关注"}${res.result ? "成功": "失败"}`,
+      icon: res.result ? "success": "error"
+    });
+    this.jsData.updatingFollowCats = false;
   }
 })
