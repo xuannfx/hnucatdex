@@ -1,4 +1,7 @@
 /* pages/info/myFollowCats/myFollowCats.wxss */
+page {
+  background-color: var(--color-gray-light);
+}
 
 .follow-count {
   width: 100%;
@@ -31,6 +34,7 @@
 .cat-avatar image {
   width: 100%;
   height: 100%;
+  background-color: var(--color-gray);
 }
 
 .cat-name {
@@ -47,8 +51,8 @@
   display: flex;
 }
 .location-logo {
-  width: 32rpx;
-  height: 32rpx;
+  width: 24rpx;
+  height: 24rpx;
   margin-right: 4rpx;
 }
 
@@ -66,11 +70,9 @@
 .followed {
   border: 3rpx solid var(--color-gray-dark);
   color: var(--color-gray-dark);
-  background-color: #fff;
 }
 
 .unfollowed {
   border: 2rpx solid var(--color-primary);
   color: var(--color-primary);
-  background-color: #fff;
 }
