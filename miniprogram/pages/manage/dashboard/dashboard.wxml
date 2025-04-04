@@ -1,0 +1,231 @@
+<!--miniprogram/pages/manage/dashboard/dashboard.wxml-->
+<view class="container">
+
+  <!-- 加载状态 -->
+  <view class="loading-container" wx:if="{{loading}}">
+    <view class="loading">
+        <image src='/pages/public/images/system/loading.gif'></image>
+    </view>
+  </view>
+
+  <!-- 数据Bento布局 -->
+  <view class="bento-grid" wx:if="{{!loading}}">
+    <!-- 第一行：总览卡片 - 大卡片 -->
+    <view class="bento-card large">
+      <view class="card-title">概览</view>
+      <view class="card-content">
+        <view class="stat-row">
+          <view class="stat-item">
+            <view class="value large primary">{{stats.totalCats || 0}}</view>
+            <view class="label">总数量</view>
+          </view>
+          <view class="stat-item">
+            <view class="value large">{{stats.currentCats || 0}}</view>
+            <view class="label">现存</view>
+          </view>
+          <view class="stat-item">
+            <view class="value large">{{stats.totalMissing || 0}}</view>
+            <view class="label">失踪</view>
+          </view>
+          <view class="stat-item">
+            <view class="value large">{{stats.totalDeceased || 0}}</view>
+            <view class="label">去世</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 第二行：绝育情况 -->
+    <view class="bento-card medium sterilization-card">
+      <view class="card-title">绝育情况</view>
+      <view class="card-content">
+        <!-- 总体绝育情况 -->
+        <view class="progress-container">
+          <view class="label">全部猫猫</view>
+          <view class="progress-text">
+            <text class="value large">{{stats.totalSterilized || 0}}</text>
+            <text class="progress-total">/{{stats.totalCats || 0}}</text>
+          </view>
+          <view class="progress-bar">
+            <view class="progress-fill" style="width: {{stats.sterilizationWidth}}%;"></view>
+          </view>
+          <view class="rate right">绝育率 {{stats.sterilizationRate}}%</view>
+        </view>
+
+        <!-- 现存猫猫绝育情况 -->
+        <view class="progress-container">
+          <view class="label">现存猫猫</view>
+          <view class="progress-text">
+            <text class="value large">{{stats.currentSterilized || 0}}</text>
+            <text class="progress-total">/{{stats.currentCats || 0}}</text>
+          </view>
+          <view class="progress-bar">
+            <view class="progress-fill current" style="width: {{stats.currentSterilizationWidth}}%;"></view>
+          </view>
+          <view class="rate right">绝育率 {{stats.currentSterilizationRate}}%</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 第二行右侧容器: 本月数据 + 最新事件 -->
+    <view class="bento-column-container">
+      <!-- 本月数据 -->
+      <view class="bento-card normal">
+        <view class="card-title">本月数据</view>
+        <view class="card-content">
+          <view class="month-stats">
+            <view class="month-item">
+              <view class="label">新增</view>
+              <view class="value medium">{{stats.monthStats.newCats || 0}}</view>
+            </view>
+            <view class="month-item">
+              <view class="label">领养</view>
+              <view class="value medium">{{stats.monthStats.adopted || 0}}</view>
+            </view>
+            <view class="month-item">
+              <view class="label">绝育</view>
+              <view class="value medium">{{stats.monthStats.sterilized || 0}}</view>
+            </view>
+            <view class="month-item">
+              <view class="label">失踪</view>
+              <view class="value medium">{{stats.monthStats.missing || 0}}</view>
+            </view>
+            <view class="month-item">
+              <view class="label">去世</view>
+              <view class="value medium">{{stats.monthStats.deceased || 0}}</view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 最新事件卡片 -->
+      <view class="bento-card small">
+        <view class="card-title-container">
+          <view class="card-title">最新事件</view>
+          <view class="more-button" bindtap="showEventsPopup" wx:if="{{stats.latestEvents && stats.latestEvents.length > 1}}">更多</view>
+        </view>
+        <view class="card-content">
+          <!-- 只显示最新的一条事件 -->
+          <view class="latest-events-list-summary">
+            <block wx:if="{{stats.latestEvents && stats.latestEvents.length > 0}}">
+              <view class="event-item">
+                <view class="event-type {{stats.latestEvents[0].type === '绝育' ? 'sterilized' : (stats.latestEvents[0].type === '领养' ? 'adopted' : (stats.latestEvents[0].type === '失踪' ? 'missing' : (stats.latestEvents[0].type === '去往喵星' ? 'deceased' : 'newcat')))}}">{{stats.latestEvents[0].type}}</view>
+                <view class="event-cat-name">{{stats.latestEvents[0].name}}</view>
+                <view class="event-date">{{stats.latestEvents[0].date}}</view>
+              </view>
+              
+            </block>
+            <view wx:else class="empty-events">
+              暂无事件记录
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 第三行：领养情况 -->
+    <view class="bento-card normal">
+      <view class="card-title">领养情况</view>
+      <view class="card-content">
+        <view class="progress-container">
+          <view class="progress-text">
+            <text class="value large">{{stats.totalAdopted || 0}}</text>
+            <text class="progress-total">/{{stats.totalCats || 0}}</text>
+          </view>
+          <view class="progress-bar">
+            <view class="progress-fill adoption" style="width: {{stats.adoptionWidth}}%;"></view>
+          </view>
+          <view class="rate right">领养率 {{stats.adoptionRate}}%</view>
+        </view>
+      </view>
+    </view>
+  
+    <!-- 第三行：性别比例 -->
+    <view class="bento-card normal">
+      <view class="card-title">性别比例</view>
+      <view class="card-content">
+        <view class="gender-stats">
+          <view class="gender-item">
+            <image class="gender-icon" src="/pages/public/images/card/card/male.png" mode="aspectFit"></image>
+            <view class="value medium">{{stats.genderStats.male.count || 0}}</view>
+            <view class="rate">{{stats.genderStats.male.rate}}%</view>
+          </view>
+          <view class="gender-item">
+            <image class="gender-icon" src="/pages/public/images/card/card/female.png" mode="aspectFit"></image>
+            <view class="value medium">{{stats.genderStats.female.count || 0}}</view>
+            <view class="rate">{{stats.genderStats.female.rate}}%</view>
+          </view>
+          <view class="gender-item" wx:if="{{stats.genderStats.unknown.count > 0}}" bindtap="showUnknownCatsPopup">
+            <view class="gender-icon unknown">?</view>
+            <view class="value medium">{{stats.genderStats.unknown.count || 0}}</view>
+            <view class="rate">{{stats.genderStats.unknown.rate}}%</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+
+    <!-- 校区分布 -->
+    <view class="bento-card large">
+      <view class="card-title">校区分布</view>
+      <view class="card-content campus-stats">
+        <block wx:for="{{stats.campusStats}}" wx:key="campus">
+          <view class="campus-item">
+            <view class="campus-name">{{item.campus}}</view>
+            <view class="value medium primary">{{item.count}}只</view>
+            <view class="rate">绝育率 {{item.sterilizationRate}}%</view>
+          </view>
+        </block>
+      </view>
+    </view>
+
+    <!-- 花色分布 -->
+    <view class="bento-card large">
+      <view class="card-title">花色分布</view>
+      <view class="card-content colour-stats">
+        <block wx:for="{{stats.colourStats}}" wx:key="colour">
+          <view class="colour-item">
+            <view class="colour-name">{{item.colour}}</view>
+            <view class="value small primary">{{item.count}}只</view>
+          </view>
+        </block>
+      </view>
+    </view>
+    
+  </view>
+
+  <!-- 未知性别猫猫弹窗 -->
+  <popup show="{{showUnknownCatsPopup}}" bind:close="closeUnknownCatsPopup" position="center">
+    <view class="popup-content">
+      <view class="modal-header">
+        <text class="modal-title">未知性别</text>
+        <view class="modal-close" bindtap="closeUnknownCatsPopup">×</view>
+      </view>
+      <view class="unknown-cats-popup-content">
+        <view class="unknown-cats-list-popup">
+          <view wx:for="{{stats.genderStats.unknown.cats}}" wx:key="*this" class="unknown-cat-name-popup">{{item}}</view>
+        </view>
+      </view>
+    </view>
+  </popup>
+
+  <!-- 最新事件完整列表弹窗 -->
+  <popup show="{{showEventsPopup}}" bind:close="closeEventsPopup" position="center">
+    <view class="popup-content events-popup">
+      <view class="modal-header">
+        <text class="modal-title">事件记录</text>
+        <view class="modal-close" bindtap="closeEventsPopup">×</view>
+      </view>
+       <view class="events-list-popup">
+          <view wx:for="{{stats.latestEvents}}" wx:key="index" class="event-item">
+            <view class="event-type {{item.type === '绝育' ? 'sterilized' : (item.type === '领养' ? 'adopted' : (item.type === '失踪' ? 'missing' : (item.type === '去往喵星' ? 'deceased' : 'newcat')))}}">{{item.type}}</view>
+            <view class="event-cat-name">{{item.name}}</view>
+            <view class="event-date">{{item.date}}</view>
+          </view>
+          <view wx:if="{{!stats.latestEvents || stats.latestEvents.length === 0}}" class="empty-events">
+            暂无事件
+          </view>
+        </view>
+    </view>
+  </popup>
+</view> 

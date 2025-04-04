@@ -1,0 +1,460 @@
+/* miniprogram/pages/manage/dashboard/dashboard.wxss */
+
+/* ======== 基础布局 ======== */
+.container {
+  padding: 30rpx;
+  background-color: var(--color-gray-light);
+  min-height: 100vh;
+}
+
+/* 加载状态 */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200rpx;
+}
+
+.loading image {
+  width: 165.9rpx;
+  height: 90.3rpx;
+  margin: 10rpx 292rpx 200rpx 292rpx;
+}
+
+/* ======== Bento Grid 布局相关 ======== */
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: auto;
+  gap: 20rpx;
+  margin-bottom: 30rpx;
+  width: 100%;
+}
+
+.bento-column-container {
+  grid-column: span 1;
+  grid-row: span 3;
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+/* ======== 卡片相关样式 ======== */
+.bento-card {
+  background-color: #ffffff;
+  border-radius: 20rpx;
+  padding: 30rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.bento-card.large {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
+.bento-card.medium {
+  grid-column: span 1;
+  grid-row: span 3;
+}
+
+.bento-card.normal {
+  grid-column: span 1;
+  grid-row: span 1;
+  aspect-ratio: 1 / 1;
+}
+
+.bento-card.small {
+  grid-column: span 1;
+  grid-row: span 1;
+  aspect-ratio: 2 / 1;
+}
+
+.bento-card.small .latest-events-list {
+  max-height: 250rpx; /* 限制最大高度 */
+  overflow-y: auto;   /* 超出时显示滚动条 */
+}
+
+.bento-card.small .event-item {
+  padding: 15rpx 0;
+}
+
+/* 卡片标题样式 */
+.card-title-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.card-title {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.card-content {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  flex-direction: column;
+  height: calc(100% - 50rpx); /* 减去标题高度 */
+}
+
+.more-button {
+  font-size: 24rpx;
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+.more-button:active {
+  opacity: 0.7;
+}
+
+/* ======== 通用文本 ======== */
+/* 数值 */
+.value {
+  font-weight: 600;
+  color: #1d1d1f;
+}
+
+.value.large {
+  font-size: 44rpx;
+  font-weight: 700;
+  margin-bottom: 6rpx;
+}
+
+.value.medium {
+  font-size: 32rpx;
+  margin: 10rpx 0;
+}
+
+.value.small {
+  font-size: 26rpx;
+}
+
+.value.primary {
+  color: var(--color-primary);
+}
+
+/* 标签 */
+.label {
+  font-size: 24rpx;
+  color: var(--color-gray-max);
+}
+
+/* 百分比 */
+.rate {
+  font-size: 24rpx;
+  color: var(--color-gray-max);
+}
+
+.rate.right {
+  text-align: right;
+}
+
+/* ======== 数据展示组件样式 ======== */
+/* 总览卡片样式 */
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.stat-item {
+  text-align: center;
+  padding: 20rpx 0;
+  width: 25%;
+  flex: 1;
+}
+
+/* 进度条样式 */
+.progress-container {
+  padding: 10rpx 0;
+}
+
+.progress-text {
+  display: flex;
+  align-items: baseline;
+}
+
+.progress-total {
+  font-size: 24rpx;
+  color: var(--color-gray-max);
+  margin-left: 5rpx;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 16rpx;
+  background-color: var(--color-gray-normal);
+  border-radius: 10rpx;
+  overflow: hidden;
+  margin: 15rpx 0;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #34c759;
+  transition: width 0.5s ease;
+}
+
+.progress-fill.current {
+  background-color: #24803d;
+}
+
+.progress-fill.adoption {
+  background-color: #32ade6;
+}
+
+/* 数据网格样式 */
+.month-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15rpx;
+  margin-top: 25rpx;
+}
+
+.month-item {
+  text-align: center;
+}
+
+.campus-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20rpx;
+}
+
+.campus-item {
+  padding: 20rpx;
+  border-radius: 16rpx;
+  text-align: center;
+}
+
+.campus-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1d1d1f;
+}
+
+.colour-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15rpx;
+}
+
+.colour-item {
+  padding: 20rpx;
+  text-align: center;
+}
+
+.colour-name {
+  font-size: 24rpx;
+  font-weight: 500;
+  color: #1d1d1f;
+  margin-bottom: 8rpx;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 性别比例样式 */
+.gender-stats {
+  display: flex;
+  justify-content: space-around;
+}
+
+.gender-item {
+  text-align: center;
+}
+
+.gender-icon {
+  width: 50rpx;
+  height: 50rpx;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 15rpx auto 15rpx;
+  background-color: var(--color-gray-normal);
+}
+
+.gender-icon.unknown {
+  width: 50rpx;
+  height: 50rpx;
+  border-radius: 50%;
+  display: flex;
+  font-size: 40rpx;
+  font-weight: 600;
+  background-color: #8e8e93;
+  color: white;
+}
+
+/* 突出显示可点击的未知性别图标 */
+.gender-item[bindtap] {
+  position: relative;
+  cursor: pointer;
+}
+
+.gender-item[bindtap]::after {
+  content: "";
+  position: absolute;
+  width: 12rpx;
+  height: 12rpx;
+  background-color: var(--color-primary);
+  border-radius: 50%;
+  top: 0;
+  right: 20rpx;
+}
+
+.gender-item[bindtap]:active {
+  opacity: 0.7;
+}
+
+/* ======== 事件相关样式 ======== */
+.latest-events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.latest-events-list-summary .event-item {
+  padding: 10rpx 0;
+}
+
+.event-item {
+  display: flex;
+  align-items: center;
+  border-radius: 12rpx;
+}
+
+.event-type {
+  padding: 6rpx 16rpx;
+  border-radius: 50rpx;
+  font-size: 22rpx;
+  margin-right: 16rpx;
+  flex-shrink: 0;
+}
+
+.event-type.sterilized {
+  background-color: #34c759;
+  color: white;
+}
+
+.event-type.adopted {
+  background-color: #5ac8fa;
+  color: white;
+}
+
+.event-type.missing {
+  background-color: #ff9500;
+  color: white;
+}
+
+.event-type.deceased {
+  background-color: #8e8e93;
+  color: white;
+}
+
+.event-type.newcat {
+  background-color: #ff2d55;
+  color: white;
+}
+
+.event-cat-name {
+  font-size: 26rpx;
+  font-weight: bold;
+  flex-grow: 1;
+  margin-right: auto;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 180rpx;
+}
+
+.event-date {
+  font-size: 24rpx;
+  color: #86868b;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.empty-events {
+  text-align: center;
+  padding: 40rpx 0;
+  color: #86868b;
+  font-size: 28rpx;
+}
+
+/* ======== 弹窗相关样式 ======== */
+/* 基础弹窗样式 */
+.popup-content {
+  width: 560rpx;
+  max-height: 70vh;
+  box-sizing: border-box;
+  background-color: white;
+  border-radius: 40rpx;
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30rpx;
+  background-color: var(--color-gray-light);
+  font-size: 32rpx;
+  font-weight: bold;
+}
+
+.modal-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.modal-close {
+  font-size: 40rpx;
+  color: var(--color-gray);
+}
+
+.modal-close:active {
+  color: var(--color-gray);
+}
+
+/* 未知猫咪弹窗样式 */
+.unknown-cats-popup-content {
+  max-height: calc(70vh - 100rpx);
+  overflow-y: auto;
+  display: flex;
+  padding: 30rpx;
+}
+
+.unknown-cats-list-popup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+  justify-content: center;
+}
+
+.unknown-cat-name-popup {
+  background-color: var(--color-gray-normal);
+  padding: 12rpx 24rpx;
+  border-radius: 30rpx;
+  font-size: 24rpx;
+}
+
+/* 事件弹窗样式 */
+.events-popup .popup-content {
+  width: 600rpx;
+  max-height: 75vh;
+}
+
+.events-popup .events-list-popup {
+  display: flex;
+  padding: 30rpx;
+  flex-direction: column;
+  gap: 20rpx; /* 弹窗内事件间距 */
+  max-height: calc(75vh - 180rpx); /* 大致减去 header 和 filter 区域高度 */
+  overflow-y: auto;
+}
