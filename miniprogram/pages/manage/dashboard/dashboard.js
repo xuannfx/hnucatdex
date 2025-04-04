@@ -54,11 +54,6 @@ Page({
     }
   },
 
-  // 处理点击刷新按钮
-  handleRefresh() {
-    this.loadStats();
-  },
-
   showUnknownCatsPopup() {
     this.setData({
       showUnknownCatsPopup: true

@@ -1,15 +1,8 @@
 <!--miniprogram/pages/manage/dashboard/dashboard.wxml-->
 <view class="container">
 
-  <!-- 加载状态 -->
-  <view class="loading-container" wx:if="{{loading}}">
-    <view class="loading">
-        <image src='/pages/public/images/system/loading.gif'></image>
-    </view>
-  </view>
-
   <!-- 数据Bento布局 -->
-  <view class="bento-grid" wx:if="{{!loading}}">
+  <view class="bento-grid">
     <!-- 第一行：总览卡片 - 大卡片 -->
     <view class="bento-card large">
       <view class="card-title">概览</view>
