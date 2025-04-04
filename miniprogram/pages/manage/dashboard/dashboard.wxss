@@ -46,6 +46,8 @@
   padding: 30rpx;
   box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .bento-card.large {
@@ -96,9 +98,10 @@
 .card-content {
   display: flex;
   width: 100%;
+  flex: 1;
   justify-content: center;
+  align-items: center;
   flex-direction: column;
-  height: calc(100% - 50rpx); /* 减去标题高度 */
 }
 
 .more-button {
@@ -158,6 +161,7 @@
 .stat-row {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   width: 100%;
 }
 
@@ -170,7 +174,10 @@
 
 /* 进度条样式 */
 .progress-container {
-  padding: 10rpx 0;
+  width: 100%;
+}
+.progress-container.total:first-child {
+  margin-bottom: 20rpx;
 }
 
 .progress-text {
@@ -190,7 +197,7 @@
   background-color: var(--color-gray-normal);
   border-radius: 10rpx;
   overflow: hidden;
-  margin: 15rpx 0;
+  margin-bottom: 20rpx;
 }
 
 .progress-fill {
@@ -213,6 +220,7 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 15rpx;
   margin-top: 25rpx;
+  width: 100%;
 }
 
 .month-item {
@@ -262,6 +270,7 @@
 .gender-stats {
   display: flex;
   justify-content: space-around;
+  width: 100%;
 }
 
 .gender-item {
@@ -334,36 +343,37 @@
   font-size: 22rpx;
   margin-right: 16rpx;
   flex-shrink: 0;
+  font-weight: bold;
 }
 
 .event-type.sterilized {
-  background-color: #34c759;
-  color: white;
+  background-color: rgba(52, 199, 89, 0.15);
+  color: #2d9e4c;
 }
 
 .event-type.adopted {
-  background-color: #5ac8fa;
-  color: white;
+  background-color: rgba(90, 200, 250, 0.15);
+  color: #0071a4;
 }
 
 .event-type.missing {
-  background-color: #ff9500;
-  color: white;
+  background-color: rgba(255, 149, 0, 0.15);
+  color: #c65a00;
 }
 
 .event-type.deceased {
-  background-color: #8e8e93;
-  color: white;
+  background-color: rgba(142, 142, 147, 0.15);
+  color: #636366;
 }
 
 .event-type.newcat {
-  background-color: #ff2d55;
-  color: white;
+  background-color: rgba(255, 45, 85, 0.15);
+  color: #c30031;
 }
 
 .event-cat-name {
+  display: flex;
   font-size: 26rpx;
-  font-weight: bold;
   flex-grow: 1;
   margin-right: auto;
   text-overflow: ellipsis;

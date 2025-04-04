@@ -40,7 +40,7 @@
       <view class="card-title">绝育情况</view>
       <view class="card-content">
         <!-- 总体绝育情况 -->
-        <view class="progress-container">
+        <view class="progress-container total">
           <view class="label">全部猫猫</view>
           <view class="progress-text">
             <text class="value large">{{stats.totalSterilized || 0}}</text>
