@@ -165,8 +165,17 @@ Page({
     // 重置数据
     this.resetFeedData();
     
-    // 重新加载所有数据
-    await this.onLoad();
+    // 重新加载所有数据，但不再使用缓存
+    await this.loadUser();
+    await this.loadFollowCats();
+    await this.loadFollowCatsDetail();
+    await this.loadMoreFeed();
+    
+    this.setData({
+      refreshing: false
+    });
+    
+    wx.stopPullDownRefresh();
   },
 
   /**
@@ -486,154 +495,84 @@ Page({
 
   async _sortedMerge() {
     let { waitingList } = this.jsData;
-    let { loadnomore, feed } = this.data;
+    let { loadnomore } = this.data;
 
-    // 排序优化：只在必要时进行排序
-    if (waitingList.photo.length > 1) {
-      waitingList.photo.sort((a, b) => b.create_date - a.create_date);
-    }
-    if (waitingList.comment.length > 1) {
-      waitingList.comment.sort((a, b) => b.create_date - a.create_date);
-    }
+    // 对照片和评论各自进行排序
+    waitingList.photo.sort((a, b) => b.create_date - a.create_date);
+    waitingList.comment.sort((a, b) => b.create_date - a.create_date);
 
-    // 创建新的数组以存储要添加的feed项
-    let newFeedItems = [];
+    let res = [];
     
-    // 需要保留的元素数量
-    const keepCount = loadnomore ? 0 : 1;
-    
-    // 时间间隔设置（5分钟）
-    const TIME_INTERVAL = 5 * 60 * 1000;
-    
-    // 每组最大数量限制
-    const MAX_PHOTOS_PER_GROUP = 6;
-    const MAX_COMMENTS_PER_GROUP = 3;
-    
-    // 归并排序照片和评论，按时间降序排列
-    while ((newFeedItems.length < loadCount || loadnomore) && 
-           (waitingList.photo.length > keepCount || waitingList.comment.length > keepCount)) {
-      // 如果照片队列已空，添加评论
+    // 按时间归并排序
+    // 如果加载到底了，把最后一个守门员也排进去
+    let keepCount = loadnomore ? 0 : 1;
+    while ((res.length < loadCount || loadnomore) && (waitingList.photo.length > keepCount || waitingList.comment.length > keepCount)) {
       if (waitingList.photo.length <= keepCount) {
-        const comment = waitingList.comment.shift();
-        comment.dtype = 'comment';
-        
-        // 获取最新的feed项
-        const latestFeedItem = newFeedItems.length > 0 ? newFeedItems[newFeedItems.length - 1] : null;
-        
-        // 检查是否可以合并到现有组
-        const canMerge = latestFeedItem && 
-                        latestFeedItem.dtype === 'comment' && 
-                        latestFeedItem.cat._id === comment.cat_id &&
-                        latestFeedItem.items.length < MAX_COMMENTS_PER_GROUP &&
-                        Math.abs(new Date(latestFeedItem.items[0].create_date).getTime() - 
-                                new Date(comment.create_date).getTime()) <= TIME_INTERVAL;
-        
-        if (canMerge) {
-          latestFeedItem.items.push(comment);
-        } else {
-          newFeedItems.push({
-            _id: `comment_${Date.now()}_${Math.random()}`,
-            dtype: 'comment',
-            cat: comment.cat,
-            items: [comment]
-          });
-        }
+        res.push(waitingList.comment.shift());
+        res[res.length-1].dtype = 'comment';
         continue;
       }
-      
-      // 如果评论队列已空，添加照片
       if (waitingList.comment.length <= keepCount) {
-        const photo = waitingList.photo.shift();
-        photo.dtype = 'photo';
-        
-        // 获取最新的feed项
-        const latestFeedItem = newFeedItems.length > 0 ? newFeedItems[newFeedItems.length - 1] : null;
-        
-        // 检查是否可以合并到现有组
-        const canMerge = latestFeedItem && 
-                        latestFeedItem.dtype === 'photo' && 
-                        latestFeedItem.cat._id === photo.cat_id &&
-                        latestFeedItem.items[0]._openid === photo._openid &&
-                        latestFeedItem.items.length < MAX_PHOTOS_PER_GROUP &&
-                        Math.abs(new Date(latestFeedItem.items[0].create_date).getTime() - 
-                                new Date(photo.create_date).getTime()) <= TIME_INTERVAL;
-        
-        if (canMerge) {
-          latestFeedItem.items.push(photo);
-        } else {
-          newFeedItems.push({
-            _id: `photo_${Date.now()}_${Math.random()}`,
-            dtype: 'photo',
-            cat: photo.cat,
-            items: [photo]
-          });
-        }
+        res.push(waitingList.photo.shift());
+        res[res.length-1].dtype = 'photo';
         continue;
       }
-      
-      // 比较照片和评论的时间，较新的先加入
-      const latestPhoto = waitingList.photo[0];
-      const latestComment = waitingList.comment[0];
-      if (latestPhoto.create_date > latestComment.create_date) {
-        const photo = waitingList.photo.shift();
-        photo.dtype = 'photo';
-        
-        // 获取最新的feed项
-        const latestFeedItem = newFeedItems.length > 0 ? newFeedItems[newFeedItems.length - 1] : null;
-        
-        // 检查是否可以合并到现有组
-        const canMerge = latestFeedItem && 
-                        latestFeedItem.dtype === 'photo' && 
-                        latestFeedItem.cat._id === photo.cat_id &&
-                        latestFeedItem.items[0]._openid === photo._openid &&
-                        latestFeedItem.items.length < MAX_PHOTOS_PER_GROUP &&
-                        Math.abs(new Date(latestFeedItem.items[0].create_date).getTime() - 
-                                new Date(photo.create_date).getTime()) <= TIME_INTERVAL;
-        
-        if (canMerge) {
-          latestFeedItem.items.push(photo);
-        } else {
-          newFeedItems.push({
-            _id: `photo_${Date.now()}_${Math.random()}`,
-            dtype: 'photo',
-            cat: photo.cat,
-            items: [photo]
-          });
-        }
+      if (new Date(waitingList.photo[0].create_date) > new Date(waitingList.comment[0].create_date)) {
+        res.push(waitingList.photo.shift());
+        res[res.length-1].dtype = 'photo';
       } else {
-        const comment = waitingList.comment.shift();
-        comment.dtype = 'comment';
-        
-        // 获取最新的feed项
-        const latestFeedItem = newFeedItems.length > 0 ? newFeedItems[newFeedItems.length - 1] : null;
-        
-        // 检查是否可以合并到现有组
-        const canMerge = latestFeedItem && 
-                        latestFeedItem.dtype === 'comment' && 
-                        latestFeedItem.cat._id === comment.cat_id &&
-                        latestFeedItem.items.length < MAX_COMMENTS_PER_GROUP &&
-                        Math.abs(new Date(latestFeedItem.items[0].create_date).getTime() - 
-                                new Date(comment.create_date).getTime()) <= TIME_INTERVAL;
-        
-        if (canMerge) {
-          latestFeedItem.items.push(comment);
-        } else {
-          newFeedItems.push({
-            _id: `comment_${Date.now()}_${Math.random()}`,
-            dtype: 'comment',
-            cat: comment.cat,
-            items: [comment]
-          });
-        }
+        res.push(waitingList.comment.shift());
+        res[res.length-1].dtype = 'comment';
+      }
+    }
+
+    let { feed } = this.data;
+    const timeInterval = 5 * 60 * 1000; // 5分钟内的动态合并
+    for (let i = 0; i < res.length; i++) {
+      const item = res[i];
+      
+      // 当展示该猫猫的动态时进行取关再刷新，此时关注列表不包含此猫，但feed数组中仍然存在该猫动态数据，因此当 item.cat 为 undefined，跳过该条数据
+      if (!item.cat) {
+        this.setData({loadnomore: true});
+        continue;
+      }
+      let newBlock = {
+        _id: `${item.dtype}_${Date.now()}_${Math.random()}`,
+        dtype: item.dtype,
+        cat: item.cat,
+        items: [item]
+      };
+      // 几种情况会新增一个block：
+      // 1. feed流是空的；2. 上一个是不同类型；3. 上一组不是同一只猫；4. 上一个照片组已经有6张；5. 上一个留言组已经有3张；
+      // 6. 不同用户；7. 时间间隔超过5分钟
+      if (feed.length === 0) {
+        feed.push(newBlock);
+        continue;
+      }
+      let lastOne = feed[feed.length-1];
+      const currentTimestamp = new Date(item.create_date).getTime();
+      const lastTimestamp = lastOne ? new Date(lastOne.items[0].create_date).getTime() : null;
+      
+      // 获取用户ID（照片和评论的字段不同）
+      const currentUserId = item.dtype === 'photo' ? item._openid : item.user_openid;
+      const lastUserId = lastOne.dtype === 'photo' ? lastOne.items[0]._openid : lastOne.items[0].user_openid;
+
+      if (!lastOne || 
+          item.dtype != lastOne.dtype ||
+          item.cat._id != lastOne.cat._id ||
+          currentUserId != lastUserId ||
+          lastTimestamp - currentTimestamp > timeInterval ||
+          lastOne.items.length >= (lastOne.dtype === 'photo'? 6: 3)) {
+        feed.push(newBlock);
+      } else {
+        lastOne.items.push(item);
       }
     }
     
-    // 更新feed数据，添加新项到现有feed中
-    if (newFeedItems.length > 0) {
-      this.setData({
-        feed: [...feed, ...newFeedItems]
-      });
-    }
+    this.setData({feed});
+    
+    // 每次添加内容后保存缓存
+    this._saveDataToCache();
   },
 
   // 点击猫猫卡片
@@ -990,47 +929,59 @@ Page({
         });
       }
       
+      // -- 开始: 将新数据分组并添加到 feed 前面 --
+      
       // 合并所有新数据并按时间排序
       let allNewItems = [...newPhotos, ...newComments];
       allNewItems.sort((a, b) => new Date(b.create_date) - new Date(a.create_date));
       
-      // 创建新的feed项
+      // 创建新的feed项 (分组逻辑，类似_sortedMerge)
       let newFeedItems = [];
-      let lastType = null;
-      let lastCatId = null;
-      let lastOpenId = null;
-      let currentGroup = null;
+      const timeInterval = 5 * 60 * 1000; // 5分钟
       
-      // 分组处理
-      allNewItems.forEach(item => {
-        // 如果是新的类型、猫咪或用户，则创建新组
-        if (item.dtype !== lastType || item.cat._id !== lastCatId || 
-            (item.dtype === 'photo' && item._openid !== lastOpenId)) {
-          
-          // 创建新组
-          currentGroup = {
-            _id: `${item.dtype}_${Date.now()}_${Math.random()}`,
-            dtype: item.dtype,
-            cat: item.cat,
-            items: [item]
-          };
-          
-          newFeedItems.push(currentGroup);
-          
-          // 更新lastType和lastCatId
-          lastType = item.dtype;
-          lastCatId = item.cat._id;
-          lastOpenId = item.dtype === 'photo' ? item._openid : null;
-        } else {
-          // 添加到现有组
-          currentGroup.items.push(item);
+      for (const item of allNewItems) {
+        // 确保 cat 存在
+        if (!item.cat) continue; 
+        
+        let newBlock = {
+          _id: `${item.dtype}_${Date.now()}_${Math.random()}`,
+          dtype: item.dtype,
+          cat: item.cat,
+          items: [item]
+        };
+       
+        if (newFeedItems.length === 0) {
+          newFeedItems.push(newBlock);
+          continue;
         }
-      });
+        
+        let lastOne = newFeedItems[newFeedItems.length-1];
+        const currentTimestamp = new Date(item.create_date).getTime();
+        const lastTimestamp = lastOne ? new Date(lastOne.items[0].create_date).getTime() : null;
+        const currentUserId = item.dtype === 'photo' ? item._openid : item.user_openid;
+        const lastUserId = lastOne.dtype === 'photo' ? lastOne.items[0]._openid : lastOne.items[0].user_openid;
+
+        // 分组条件 (同 _sortedMerge)
+        if (!lastOne || 
+            item.dtype != lastOne.dtype ||
+            item.cat._id != lastOne.cat._id ||
+            currentUserId != lastUserId ||
+            Math.abs(lastTimestamp - currentTimestamp) > timeInterval || // 注意: 最新内容用绝对值比较时间差可能更合适
+            lastOne.items.length >= (lastOne.dtype === 'photo'? 6: 3)) {
+          newFeedItems.push(newBlock);
+        } else {
+          lastOne.items.push(item);
+        }
+      }
       
-      // 将新items添加到feed的前面
-      this.setData({
-        feed: [...newFeedItems, ...feed]
-      });
+      // 将新创建的分组添加到现有 feed 的最前面
+      if (newFeedItems.length > 0) {
+        this.setData({
+          feed: [...newFeedItems, ...this.data.feed]
+        });
+      }
+      // -- 结束: 将新数据分组并添加到 feed 前面 --
+      
     } catch (error) {
       console.error('加载最新Feed数据失败:', error);
     } finally {
