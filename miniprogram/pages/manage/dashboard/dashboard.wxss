@@ -1,6 +1,6 @@
 /* miniprogram/pages/manage/dashboard/dashboard.wxss */
 
-/* ======== 基础布局 ======== */
+/* ==================== 1. 基础布局 ==================== */
 .container {
   padding: 30rpx;
   background-color: var(--color-gray-light);
@@ -21,7 +21,17 @@
   margin: 10rpx 292rpx 200rpx 292rpx;
 }
 
-/* ======== Bento Grid 布局相关 ======== */
+/* 更新时间提示 */
+.update-time {
+  width: 100%;
+  text-align: center;
+  color: var(--color-gray-max);
+  font-size: 24rpx;
+  padding: 20rpx 0 30rpx;
+  border-top: 1rpx solid var(--color-gray-normal);
+}
+
+/* ==================== 2. Bento Grid 布局 ==================== */
 .bento-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -39,7 +49,7 @@
   gap: 20rpx;
 }
 
-/* ======== 卡片相关样式 ======== */
+/* ==================== 3. 卡片通用样式 ==================== */
 .bento-card {
   background-color: #ffffff;
   border-radius: 20rpx;
@@ -50,6 +60,7 @@
   flex-direction: column;
 }
 
+/* 卡片尺寸 */
 .bento-card.large {
   grid-column: span 2;
   grid-row: span 2;
@@ -72,16 +83,7 @@
   aspect-ratio: 2 / 1;
 }
 
-.bento-card.small .latest-events-list {
-  max-height: 250rpx; /* 限制最大高度 */
-  overflow-y: auto;   /* 超出时显示滚动条 */
-}
-
-.bento-card.small .event-item {
-  padding: 15rpx 0;
-}
-
-/* 卡片标题样式 */
+/* 卡片标题和内容 */
 .card-title-container {
   display: flex;
   justify-content: space-between;
@@ -92,7 +94,6 @@
 .card-title {
   font-size: 30rpx;
   font-weight: 600;
-  color: #333;
 }
 
 .card-content {
@@ -114,8 +115,8 @@
   opacity: 0.7;
 }
 
-/* ======== 通用文本 ======== */
-/* 数值 */
+/* ==================== 4. 通用文本样式 ==================== */
+/* 数值样式 */
 .value {
   font-weight: 600;
   color: #1d1d1f;
@@ -140,14 +141,48 @@
   color: var(--color-primary);
 }
 
-/* 标签 */
-.label {
-  font-size: 24rpx;
-  color: var(--color-gray-max);
+/* 标题样式 */
+.section-title {
+  font-weight: bold;
 }
 
-/* 百分比 */
-.rate {
+.section-title.large {
+  font-size: 36rpx;
+  text-align: center;
+  margin: 20rpx 0 30rpx;
+}
+
+.section-title.medium {
+  font-size: 28rpx;
+  margin-bottom: 10rpx;
+}
+
+.section-title.small {
+  font-size: 26rpx;
+}
+
+/* 区块内容样式 */
+.section-content {
+  font-size: 24rpx;
+  color: var(--color-gray-max);
+  line-height: 1.5;
+}
+
+/* 状态颜色 */
+.status-good {
+  color: #4cd964;
+}
+
+.status-medium {
+  color: #ffcc00;
+}
+
+.status-poor {
+  color: #ff3b30;
+}
+
+/* 标签和百分比 */
+.label, .rate {
   font-size: 24rpx;
   color: var(--color-gray-max);
 }
@@ -156,8 +191,41 @@
   text-align: right;
 }
 
-/* ======== 数据展示组件样式 ======== */
-/* 总览卡片样式 */
+/* 列表项样式 */
+.list-item {
+  margin-bottom: 10rpx;
+  line-height: 1.4;
+}
+
+/* 信息面板 */
+.info-panel {
+  padding: 20rpx;
+  border-radius: 10rpx;
+  margin-bottom: 30rpx;
+}
+
+.info-panel.default {
+  background-color: var(--color-gray-light);
+}
+
+.info-panel.highlight {
+  background-color: #f0f9eb;
+  border-left: 4rpx solid #07c160;
+}
+
+/* 空数据提示 */
+.no-data, .empty-events {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100rpx;
+  color: var(--color-gray-max);
+  font-size: 26rpx;
+  text-align: center;
+}
+
+/* ==================== 5. 组件样式 ==================== */
+/* 5.1 总览卡片 */
 .stat-row {
   display: flex;
   justify-content: space-between;
@@ -172,10 +240,11 @@
   flex: 1;
 }
 
-/* 进度条样式 */
+/* 5.2 进度条样式 */
 .progress-container {
   width: 100%;
 }
+
 .progress-container.total:first-child {
   margin-bottom: 20rpx;
 }
@@ -194,7 +263,7 @@
 .progress-bar {
   width: 100%;
   height: 16rpx;
-  background-color: var(--color-gray-normal);
+  background-color: rgba(52, 199, 89, 0.15);
   border-radius: 10rpx;
   overflow: hidden;
   margin-bottom: 20rpx;
@@ -203,7 +272,16 @@
 .progress-fill {
   height: 100%;
   background-color: #34c759;
-  transition: width 0.5s ease;
+  transition: width 0.3s;
+}
+
+/* 进度条变体 */
+.progress-bar.current-bg {
+  background-color: rgba(36, 128, 61, 0.15);
+}
+
+.progress-bar.adoption-bg {
+  background-color: rgba(50, 173, 230, 0.15);
 }
 
 .progress-fill.current {
@@ -214,7 +292,8 @@
   background-color: #32ade6;
 }
 
-/* 数据网格样式 */
+/* 5.3 数据网格样式 */
+/* 月度数据 */
 .month-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -227,22 +306,11 @@
   text-align: center;
 }
 
+/* 花色和校区数据 */
 .campus-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20rpx;
-}
-
-.campus-item {
-  padding: 20rpx;
-  border-radius: 16rpx;
-  text-align: center;
-}
-
-.campus-name {
-  font-size: 28rpx;
-  font-weight: 600;
-  color: #1d1d1f;
 }
 
 .colour-stats {
@@ -251,22 +319,30 @@
   gap: 15rpx;
 }
 
-.colour-item {
+.campus-item, .colour-item {
   padding: 20rpx;
   text-align: center;
 }
 
+.campus-item {
+  border-radius: 16rpx;
+}
+
+.campus-name {
+  font-size: 28rpx;
+  font-weight: bold;
+}
+
 .colour-name {
   font-size: 24rpx;
-  font-weight: 500;
-  color: #1d1d1f;
+  font-weight: bold;
   margin-bottom: 8rpx;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
-/* 性别比例样式 */
+/* 5.4 性别比例样式 */
 .gender-stats {
   display: flex;
   justify-content: space-around;
@@ -289,10 +365,6 @@
 }
 
 .gender-icon.unknown {
-  width: 50rpx;
-  height: 50rpx;
-  border-radius: 50%;
-  display: flex;
   font-size: 40rpx;
   font-weight: 600;
   background-color: #8e8e93;
@@ -320,7 +392,7 @@
   opacity: 0.7;
 }
 
-/* ======== 事件相关样式 ======== */
+/* 5.5 事件列表样式 */
 .latest-events-list {
   display: flex;
   flex-direction: column;
@@ -329,6 +401,15 @@
 
 .latest-events-list-summary .event-item {
   padding: 10rpx 0;
+}
+
+.bento-card.small .latest-events-list {
+  max-height: 250rpx;
+  overflow-y: auto;
+}
+
+.bento-card.small .event-item {
+  padding: 15rpx 0;
 }
 
 .event-item {
@@ -346,6 +427,7 @@
   font-weight: bold;
 }
 
+/* 事件类型颜色 */
 .event-type.sterilized {
   background-color: rgba(52, 199, 89, 0.15);
   color: #2d9e4c;
@@ -389,22 +471,254 @@
   margin-left: auto;
 }
 
-.empty-events {
-  text-align: center;
-  padding: 40rpx 0;
-  color: #86868b;
-  font-size: 28rpx;
+/* 5.6 区域分布详情 */
+.distribution-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin: 20rpx 0;
 }
 
-/* ======== 弹窗相关样式 ======== */
-/* 基础弹窗样式 */
+/* 校区选择器 */
+.campus-selector {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.campus-tab {
+  padding: 10rpx 20rpx;
+  margin: 0 10rpx;
+  border-radius: 50rpx;
+  font-size: 24rpx;
+  font-weight: bold;
+  color: var(--color-gray-max);
+  background-color: var(--color-gray-light);
+}
+
+.campus-tab:first-child {
+  margin-left: 0;
+}
+
+.campus-tab.active {
+  color: var(--color-primary);
+  background-color: var(--color-primary-light);
+}
+
+/* 排序按钮 */
+.sort-button {
+  width: 40rpx;
+  height: 40rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.sort-icon {
+  width: 36rpx;
+  height: 36rpx;
+}
+
+/* 区域列表 */
+.area-distribution-list {
+  width: 100%;
+  max-height: 600rpx;
+  overflow-y: auto;
+}
+
+.area-header {
+  display: flex;
+  padding: 10rpx 0;
+  margin-bottom: 10rpx;
+  border-bottom: 1rpx solid var(--color-gray-normal);
+  font-size: 24rpx;
+  color: var(--color-gray-max);
+}
+
+.area-name-header {
+  flex: 2;
+  padding-left: 10rpx;
+}
+
+.area-count-header {
+  flex: 3;
+  text-align: left;
+}
+
+.area-sterilization-header {
+  flex: 2;
+  text-align: right;
+}
+
+.area-tnr-header {
+  flex: 3;
+  text-align: right;
+  padding-right: 10rpx;
+}
+
+.area-item {
+  display: flex;
+  align-items: center;
+  padding: 15rpx 0;
+  border-bottom: 1rpx solid var(--color-gray-normal);
+  transition: transform 0.3s ease-in-out;
+}
+
+.area-item:last-child {
+  border-bottom: none;
+}
+
+.area-item.animated {
+  transition: transform 0.3s ease-in-out;
+}
+
+.area-name {
+  flex: 2;
+  font-size: 24rpx;
+  padding-left: 10rpx;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.area-bar-container {
+  flex: 3;
+  display: flex;
+  align-items: center;
+  height: 30rpx;
+}
+
+.area-bar {
+  height: 20rpx;
+  background-color: var(--color-primary-light);
+  border-radius: 10rpx;
+  margin-right: 10rpx;
+  min-width: 10rpx;
+  transition: width 0.3s;
+}
+
+.area-count {
+  font-size: 24rpx;
+  color: var(--color-gray-max);
+}
+
+.area-sterilization {
+  flex: 2;
+  font-size: 24rpx;
+  color: var(--color-gray-max);
+  text-align: right;
+}
+
+.area-tnr {
+  flex: 3;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 30rpx;
+  padding-right: 10rpx;
+  position: relative;
+}
+
+/* TNR分数条 */
+.tnr-bar {
+  height: 20rpx;
+  border-radius: 10rpx;
+  margin-right: 15rpx;
+  min-width: 10rpx;
+  max-width: 120rpx;
+  transition: width 0.3s;
+  position: absolute;
+  right: 40rpx; /* 固定位置，与右侧数值保持固定距离 */
+}
+
+.tnr-good {
+  background-color: #4cd964;
+}
+
+.tnr-medium {
+  background-color: #ffcc00;
+}
+
+.tnr-poor {
+  background-color: #ff3b30;
+}
+
+.tnr-value {
+  font-size: 24rpx;
+  color: var(--color-gray-max);
+  position: absolute;
+  right: 10rpx;
+}
+
+/* TNR指数说明 */
+.tnr-legend {
+  width: 100%;
+  margin-bottom: 20rpx;
+  background-color: var(--color-gray-light);
+  border-radius: 10rpx;
+  padding: 15rpx;
+  box-sizing: border-box;
+}
+
+.tnr-title {
+  font-size: 26rpx;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+}
+
+.tnr-description {
+  font-size: 22rpx;
+  color: var(--color-gray-max);
+  margin-bottom: 10rpx;
+}
+
+.tnr-description.small {
+  display: flex;
+  flex-direction: column;
+  font-size: 20rpx;
+  color: var(--color-gray-max);
+  margin-bottom: 10rpx;
+}
+
+.tnr-description.small text {
+  margin-bottom: 2rpx;
+}
+
+.tnr-levels {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tnr-level {
+  display: flex;
+  align-items: center;
+}
+
+.tnr-level-color {
+  width: 12rpx;
+  height: 24rpx;
+  border-radius: 6rpx;
+  margin-right: 6rpx;
+}
+
+.tnr-level-text {
+  margin-left: 5rpx;
+  font-size: 20rpx;
+  color: var(--color-gray-max);
+}
+
+/* ==================== 6. 弹窗样式 ==================== */
+/* 6.1 基础弹窗样式 */
 .popup-content {
   width: 560rpx;
-  max-height: 70vh;
+  max-height: 80vh;
   box-sizing: border-box;
   background-color: white;
   border-radius: 40rpx;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .modal-header {
@@ -417,27 +731,23 @@
   font-weight: bold;
 }
 
-.modal-title {
-  font-size: 32rpx;
-  font-weight: 600;
-  color: #333;
-}
-
 .modal-close {
   font-size: 40rpx;
   color: var(--color-gray);
 }
 
-.modal-close:active {
-  color: var(--color-gray);
+.details-content {
+  padding: 0 30rpx 20rpx;
+  max-height: 60vh;
+  overflow-y: auto;
 }
 
-/* 未知猫咪弹窗样式 */
+/* 6.2 未知猫咪弹窗 */
 .unknown-cats-popup-content {
   max-height: calc(70vh - 100rpx);
   overflow-y: auto;
   display: flex;
-  padding: 30rpx;
+  padding: 20rpx 30rpx;
 }
 
 .unknown-cats-list-popup {
@@ -454,17 +764,40 @@
   font-size: 24rpx;
 }
 
-/* 事件弹窗样式 */
-.events-popup .popup-content {
-  width: 600rpx;
-  max-height: 75vh;
+/* 6.3 事件弹窗 */
+.details-content .event-item {
+  margin-top: 20rpx;
 }
 
-.events-popup .events-list-popup {
+/* 6.4 区域详情弹窗 */
+.tnr-params {
+  margin-bottom: 30rpx;
+}
+
+.param-item {
   display: flex;
-  padding: 30rpx;
-  flex-direction: column;
-  gap: 20rpx; /* 弹窗内事件间距 */
-  max-height: calc(75vh - 180rpx); /* 大致减去 header 和 filter 区域高度 */
-  overflow-y: auto;
+  align-items: center;
+  margin-bottom: 16rpx;
+  flex-wrap: wrap;
+}
+
+.param-label {
+  width: 160rpx;
+  font-size: 24rpx;
+  font-weight: bold;
+  color: var(--color-black-light);
+}
+
+.param-value {
+  width: 80rpx;
+  font-size: 24rpx;
+  color: var(--color-black-light);
+  font-weight: bold;
+  margin-right: 20rpx;
+}
+
+.param-desc {
+  flex: 1;
+  font-size: 24rpx;
+  color: var(--color-gray-max);
 }

@@ -35,23 +35,23 @@ export default async function (ctx: FunctionContext) {
         
         // 记录状态变更时间
         // 绝育状态变更
-        if (oldData.sterilized !== cat.sterilized && cat.sterilized === true) {
-          cat.sterilized_time = currentTime;
+        if (oldData.sterilized !== cat.sterilized) {
+          cat.sterilized_time = cat.sterilized === true ? currentTime : null;
         }
         
         // 领养状态变更
-        if (oldData.adopt !== cat.adopt && cat.adopt === 1) {
-          cat.adopt_time = currentTime;
+        if (oldData.adopt !== cat.adopt) {
+          cat.adopt_time = cat.adopt === 1 ? currentTime : null;
         }
         
         // 失踪状态变更
-        if (oldData.missing !== cat.missing && cat.missing === true) {
-          cat.missing_time = currentTime;
+        if (oldData.missing !== cat.missing) {
+          cat.missing_time = cat.missing === true ? currentTime : null;
         }
         
         // 返回喵星状态变更
-        if (oldData.to_star !== cat.to_star && cat.to_star === true) {
-          cat.deceased_time = currentTime;
+        if (oldData.to_star !== cat.to_star) {
+          cat.deceased_time = cat.to_star === true ? currentTime : null;
         }
         
         // 记录最后更新时间
