@@ -195,8 +195,8 @@ Page({
         break;
       case 'sterilization':
         areas.sort((a, b) => {
-          const rateA = parseFloat(a.sterilizationRate);
-          const rateB = parseFloat(b.sterilizationRate);
+          const rateA = parseFloat(a.tnrDetail.sterilization_rate);
+          const rateB = parseFloat(b.tnrDetail.sterilization_rate);
           return rateB - rateA;
         });
         break;

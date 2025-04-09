@@ -190,21 +190,42 @@
           </view>
         </view>
         
-        <!-- TNR指数说明 -->
-        <view class="tnr-legend">
-          <view class="tnr-title">TNR指数</view>
-          <view class="tnr-levels">
-            <view class="tnr-level">
-              <view class="tnr-level-color tnr-good"></view>
-              <text class="tnr-level-text">良好（≥60）</text>
+        <view class="legend-container">
+          <!-- 性别说明 -->
+          <view class="legend">
+            <view class="legend-title">性别</view>
+            <view class="legend-content">
+              <view class="legend-level">
+                <view class="legend-level-bar gender-male"></view>
+                <text class="legend-level-text">公</text>
+              </view>
+              <view class="legend-level">
+                <view class="legend-level-bar gender-female"></view>
+                <text class="legend-level-text">母</text>
+              </view>
+              <view class="legend-level">
+                <view class="legend-level-bar gender-unknown"></view>
+                <text class="legend-level-text">未知</text>
+              </view>
             </view>
-            <view class="tnr-level">
-              <view class="tnr-level-color tnr-medium"></view>
-              <text class="tnr-level-text">一般（40-59）</text>
-            </view>
-            <view class="tnr-level">
-              <view class="tnr-level-color tnr-poor"></view>
-              <text class="tnr-level-text">需改进（＜40）</text>
+          </view>
+          
+          <!-- TNR指数说明 -->
+          <view class="legend">
+            <view class="legend-title">TNR指数</view>
+            <view class="legend-content">
+              <view class="legend-level">
+                <view class="legend-level-bar tnr-good"></view>
+                <text class="legend-level-text">良好（≥60）</text>
+              </view>
+              <view class="legend-level">
+                <view class="legend-level-bar tnr-medium"></view>
+                <text class="legend-level-text">一般（40-60）</text>
+              </view>
+              <view class="legend-level">
+                <view class="legend-level-bar tnr-poor"></view>
+                <text class="legend-level-text">需改进（＜40）</text>
+              </view>
             </view>
           </view>
         </view>
@@ -214,7 +235,7 @@
           <view class="area-header">
             <text class="area-name-header">区域</text>
             <text class="area-count-header">猫猫数量</text>
-            <text class="area-sterilization-header">绝育率</text>
+            <text class="area-sterilization-header">总绝育率</text>
             <text class="area-tnr-header">TNR指数</text>
           </view>
           <block wx:if="{{stats.campus[selectedCampus].areas.length > 0}}">
@@ -225,10 +246,14 @@
               style="{{item.style}}">
               <text class="area-name">{{item.area}}</text>
               <view class="area-bar-container">
-                <view class="area-bar" style="width: {{(item.count / maxAreaCount) * 100}}%;"></view>
+                <view class="area-bar" style="width: {{(item.count / maxAreaCount) * 100}}%;">
+                  <view class="area-bar-gender gender-male" style="width: {{(item.gender.male / item.count) * 100}}%;"></view>
+                  <view class="area-bar-gender gender-female" style="width: {{(item.gender.female / item.count) * 100}}%;"></view>
+                  <view class="area-bar-gender gender-unknown" style="width: {{(item.gender.unknown / item.count) * 100}}%;"></view>
+                </view>
                 <text class="area-count">{{item.count}}</text>
               </view>
-              <text class="area-sterilization">{{item.sterilizationRate}}%</text>
+              <text class="area-sterilization">{{item.tnrDetail.sterilization_rate}}%</text>
               <view class="area-tnr" bindtap="showAreaDetails" data-area="{{index}}">
                 <view class="tnr-bar {{item.tnrIndex >= 60 ? 'tnr-good' : (item.tnrIndex >= 40 ? 'tnr-medium' : 'tnr-poor')}}" style="width: {{(item.tnrIndex / 2)}}%;"></view>
                 <text class="tnr-value">{{item.tnrIndex || 0}}</text>
@@ -302,52 +327,41 @@
         <view class="info-panel default">
           <view class="section-title medium">计算公式</view>
           <view class="section-content">
-            <view>基础分 = S × 40</view>
-            <view>质量分 = [0.4 × Q + 0.3 × A + 0.2 × s + 0.1 × R] × 60</view>
-            <view>TNR指数 = min(基础分 + 质量分, 100)</view>
-          </view>
-        </view>
-        
-        <view class="tnr-params">
-          <view class="param-item">
-            <text class="param-label">S (绝育率):</text>
-            <text class="param-value">{{currentAreaDetails.tnrDetail.sterilization_rate}}</text>
-            <text class="param-desc">绝育数量/总猫数</text>
-          </view>
-          
-          <view class="param-item">
-            <text class="param-label">Q (存活质量):</text>
-            <text class="param-value">{{currentAreaDetails.tnrDetail.survival_quality}}</text>
-            <text class="param-desc">绝育后生存时间评分</text>
-          </view>
-          
-          <view class="param-item">
-            <text class="param-label">A (领养率):</text>
-            <text class="param-value">{{currentAreaDetails.tnrDetail.adoption_rate}}</text>
-            <text class="param-desc">已领养数量/总猫数</text>
-          </view>
-          
-          <view class="param-item">
-            <text class="param-label">s (生存率):</text>
-            <text class="param-value">{{currentAreaDetails.tnrDetail.survival_rate}}</text>
-            <text class="param-desc">1-去世数量/未领养数量</text>
-          </view>
-          
-          <view class="param-item">
-            <text class="param-label">R (在册率):</text>
-            <text class="param-value">{{currentAreaDetails.tnrDetail.registration_rate}}</text>
-            <text class="param-desc">1-失踪数量/未领养数量</text>
+            <view>基础分 = S × 0.4</view>
+            <view>质量分 = [0.4(1-G)+0.3A+0.2s+0.1R] × 0.6</view>
+            <view>TNR指数 = 基础分 + 质量分</view>
           </view>
         </view>
         
         <view class="info-panel highlight">
-          <view class="section-title medium">存活质量(Q)说明</view>
-          <view class="section-content">
-            <view class="list-item">· 已绝育猫咪：从绝育日期到现在(或死亡/失踪日期)的存活时间</view>
-            <view class="list-item">· 计算方式：存活天数 ÷ 365天，最高为1分</view>
-            <view class="list-item">· 存活超过1年的猫咪得分为1，不足1年按比例计算</view>
-            <view class="list-item">· 所有绝育猫存活质量的平均值即为Q值</view>
-            <view class="list-item">· 特殊情况：若区域内所有绝育猫都被领养，则存活质量设为最高值1.00</view>
+          <view class="param-item">
+            <text class="param-label">S (绝育率):</text>
+            <text class="param-value">{{currentAreaDetails.tnrDetail.sterilization_rate}}%</text>
+            <text class="param-desc">绝育数/总猫数</text>
+          </view>
+          
+          <view class="param-item">
+            <text class="param-label">G (增长率):</text>
+            <text class="param-value">{{currentAreaDetails.tnrDetail.growth_rate}}%</text>
+            <text class="param-desc">本月净增长/上月存活</text>
+          </view>
+          
+          <view class="param-item">
+            <text class="param-label">A (领养率):</text>
+            <text class="param-value">{{currentAreaDetails.tnrDetail.adoption_rate}}%</text>
+            <text class="param-desc">已领养数/总猫数</text>
+          </view>
+          
+          <view class="param-item">
+            <text class="param-label">s (生存率):</text>
+            <text class="param-value">{{currentAreaDetails.tnrDetail.survival_rate}}%</text>
+            <text class="param-desc">1-去世数/未领养数</text>
+          </view>
+          
+          <view class="param-item">
+            <text class="param-label">R (在册率):</text>
+            <text class="param-value">{{currentAreaDetails.tnrDetail.registration_rate}}%</text>
+            <text class="param-desc">1-失踪数/存活数</text>
           </view>
         </view>
         
@@ -355,7 +369,7 @@
           <view class="section-title medium">计算过程</view>
           <view class="section-content">
             <view>基础分 = {{currentAreaDetails.tnrDetail.sterilization_rate}} × 40 = {{currentAreaDetails.tnrDetail.base_score}}</view>
-            <view>质量分 = (0.4×{{currentAreaDetails.tnrDetail.survival_quality}} + 0.3×{{currentAreaDetails.tnrDetail.adoption_rate}} + 0.2×{{currentAreaDetails.tnrDetail.survival_rate}} + 0.1×{{currentAreaDetails.tnrDetail.registration_rate}}) × 60 = {{currentAreaDetails.tnrDetail.quality_score}}</view>
+            <view>质量分 = (0.4×(1-{{currentAreaDetails.tnrDetail.growth_rate}}) + 0.3×{{currentAreaDetails.tnrDetail.adoption_rate}} + 0.2×{{currentAreaDetails.tnrDetail.survival_rate}} + 0.1×{{currentAreaDetails.tnrDetail.registration_rate}}) × 60 = {{currentAreaDetails.tnrDetail.quality_score}}</view>
             <view>TNR指数 = {{currentAreaDetails.tnrDetail.base_score}} + {{currentAreaDetails.tnrDetail.quality_score}} = {{currentAreaDetails.tnrIndex}}</view>
           </view>
         </view>
@@ -365,8 +379,7 @@
           <view class="section-content">
             <view class="list-item">· TNR指数满分为100分，分为基础分(40分)和质量分(60分)</view>
             <view class="list-item">· 基础分完全由绝育率决定，绝育率100%可获得40分基础分</view>
-            <view class="list-item">· 质量分由四个指标加权计算：存活质量(40%)、领养率(30%)、生存率(20%)、在册率(10%)</view>
-            <view class="list-item">· 所有指标均为正向指标，数值越高越好</view>
+            <view class="list-item">· 质量分由四个指标加权计算：增长率(40%)、领养率(30%)、生存率(20%)、在册率(10%)</view>
             <view class="list-item">· 已领养的猫咪即使后续死亡或失踪，也不会计入死亡率或失踪率</view>
           </view>
         </view>

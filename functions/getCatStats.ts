@@ -53,7 +53,7 @@ export default async function (ctx: FunctionContext) {
 
   // 同时查询校区和花色数据
   const [campusStats, colourStats, latestEvents] = await Promise.all([
-    getCampusStats(db, campuses, areas, _),
+    getCampusStats(db, campuses, areas, _, monthStart),
     getColourStats(db, colours),
     getLatestEvents(db)
   ]);
@@ -144,7 +144,7 @@ async function getMonthStats(db, monthStart, _) {
 }
 
 // 获取校区分布
-async function getCampusStats(db, campuses, areas, _) {
+async function getCampusStats(db, campuses, areas, _, monthStart) {
   return Promise.all(
     campuses.map(async campus => {
       // 获取该校区下的所有区域
@@ -158,7 +158,7 @@ async function getCampusStats(db, campuses, areas, _) {
       
       // 获取区域统计（并行处理）
       const areaStats = await Promise.all(
-        campusAreas.map(area => getAreaStats(db, area, _))
+        campusAreas.map(area => getAreaStats(db, area, _, monthStart))
       );
 
       return {
@@ -173,11 +173,11 @@ async function getCampusStats(db, campuses, areas, _) {
 }
 
 // 获取单个区域统计
-async function getAreaStats(db, area, _) {
+async function getAreaStats(db, area, _, monthStart) {
   const areaName = area.name;
   const campus = area.campus;
   
-  // 一次性获取区域内所有猫的详细信息
+  // 一次性获取区域内所有猫的详细信息，包括性别
   const allCats = await db.collection('cat')
     .where({ campus, area: areaName })
     .field({
@@ -187,7 +187,9 @@ async function getAreaStats(db, area, _) {
       to_star: true,
       sterilized_time: true,
       missing_time: true,
-      deceased_time: true
+      deceased_time: true,
+      gender: true,
+      create_time: true
     })
     .get();
   
@@ -195,14 +197,23 @@ async function getAreaStats(db, area, _) {
   const total = cats.length;
   const sterilizedCats = cats.filter(cat => cat.sterilized);
   
-  // 计算TNR指数
-  const tnrData = calculateTNRIndex(cats, sterilizedCats);
+  // 统计公猫和母猫数量
+  const maleCount = cats.filter(cat => cat.gender === '公').length;
+  const femaleCount = cats.filter(cat => cat.gender === '母').length;
+  const unknownCount = cats.filter(cat => cat.gender === '未知').length;
+
+  // 计算TNR指数，传入monthStart
+  const tnrData = calculateTNRIndex(cats, sterilizedCats, monthStart);
   
   return {
     area: areaName,
     count: total,
+    gender: {
+      male: maleCount, 
+      female: femaleCount, 
+      unknown: unknownCount
+    },
     sterilized: sterilizedCats.length,
-    sterilizationRate: calculateRate(sterilizedCats.length, total),
     tnrIndex: tnrData.index,
     tnrDetail: tnrData.detail
   };
@@ -222,79 +233,90 @@ async function getColourStats(db, colours) {
 }
 
 // TNR指数算法
-function calculateTNRIndex(allCats, sterilizedCats) {
+function calculateTNRIndex(allCats, sterilizedCats, monthStart) {
   const now = new Date();
   
-  let Q = 0, A = 0, D = 0, M = 0;
-  const nonAdoptedCats = allCats.filter(cat => cat.adopt !== 1);
-  
-  // 统计已绝育猫的存活质量Q和领养A
-  sterilizedCats.forEach(cat => {
-    // 存活质量计算
-    let survivalScore = 0;
-    if (cat.sterilized_time) {
-      const endTime = cat.missing ? cat.missing_time : 
-                     (cat.to_star ? cat.deceased_time : now);
-      const sterilizedDate = new Date(cat.sterilized_time);
-      const endDate = new Date(endTime || now);
-      const days = Math.floor((endDate - sterilizedDate) / (1000 * 60 * 60 * 24));
-      survivalScore = Math.min(days / 365, 1);
-    } else {
-      survivalScore = (!cat.missing && !cat.to_star && !cat.adopt) ? 1 : 0;
-    }
-    Q += survivalScore;
+  // 权重配置
+  const WEIGHTS = {
+    // 基础分权重
+    BASE_SCORE: 0.4, 
 
-    // 计数已绝育被领养猫
-    if (cat.adopt === 1) {
-      A++;
-    }
-  });
+    // 质量分权重
+    GROWTH_RATE: 0.4, // 增长率权重
+    ADOPTION_RATE: 0.3, // 领养率权重
+    SURVIVAL_RATE: 0.2, // 存活率权重
+    REGISTRATION_RATE: 0.1 // 在册率权重
+  };
   
-  // 统计所有未领养猫中的D和M
+  let N = 0, D = 0, M = 0; // N新猫数，D死亡数，M失踪数
+  let totalD = 0, totalM = 0; // 总死亡数，总失踪数
+  
+  // 筛选出当前存活的已绝育未领养猫
+  const currentAliveSterilizedCats = sterilizedCats.filter(cat => 
+    cat.adopt !== 1 && 
+    !cat.missing && 
+    !cat.to_star
+  );
+  
+  // 获取本月新增的猫
+  N = allCats.filter(cat => 
+    cat.create_time && 
+    new Date(cat.create_time) >= new Date(monthStart)
+  ).length;
+  
+  // 统计本月死亡和失踪的猫，以及所有死亡和失踪的猫
+  const nonAdoptedCats = allCats.filter(cat => cat.adopt !== 1);
   nonAdoptedCats.forEach(cat => {
     if (cat.to_star === true) {
-      D++; // 去世猫数
+      totalD++; // 总去世猫数
+      if (cat.deceased_time && new Date(cat.deceased_time) >= new Date(monthStart)) {
+        D++; // 本月去世猫数
+      }
     } else if (cat.missing === true) {
-      M++; // 失踪猫数
+      totalM++; // 总失踪猫数
+      if (cat.missing_time && new Date(cat.missing_time) >= new Date(monthStart)) {
+        M++; // 本月失踪猫数
+      }
     }
   });
 
-  const totalCats = allCats.length;
-  const validCount = Math.max(sterilizedCats.length, 1);
+  const totalCats = Math.max(allCats.length, 1);
   const totalNonAdoptedCount = Math.max(nonAdoptedCats.length, 1);
   
-  // 计算各项指标
-  const S = sterilizedCats.length / Math.max(totalCats, 1);
-  const survivalRate = 1 - D/totalNonAdoptedCount;
-  const registrationRate = 1 - M/totalNonAdoptedCount;
-  const adoptionRate = 1- nonAdoptedCats.length / Math.max(totalCats, 1);
-  
-  // 如果所有绝育猫都被领养了，将存活质量设为最高值
-  if (A === sterilizedCats.length && A > 0) {
-    Q = sterilizedCats.length;
-  }
+  // ------ 计算各项指标 ------
+  // 绝育率
+  const sterilizationRate = calculateRate(sterilizedCats.length, totalCats);
+  // 种群增长率
+  const initialCats = nonAdoptedCats.length - N; // 本月初始猫数量
+  const growthRate = initialCats > 0 ? calculateRate(N - (D + M), initialCats) : 0;
+  // 存活率
+  const survivalRate = 100 - calculateRate(totalD, totalNonAdoptedCount);
+  // 在册率
+  const registrationRate = totalNonAdoptedCount - totalD > 0 ? 100 - calculateRate(totalM, totalNonAdoptedCount - totalD) : 0;
+  // 领养率
+  const adoptionRate = 100 - calculateRate(nonAdoptedCats.length,  totalCats);
   
   // 分段计算得分
-  const baseScore = S * 40;
+  const baseScore = sterilizationRate * WEIGHTS.BASE_SCORE;
   const qualityScore = (
-    Q/validCount * 0.4 + 
-    adoptionRate * 0.3 + 
-    survivalRate * 0.2 + 
-    registrationRate * 0.1
-  ) * 60;
+    Math.max(0, 100 - growthRate) * WEIGHTS.GROWTH_RATE + 
+    adoptionRate * WEIGHTS.ADOPTION_RATE + 
+    survivalRate * WEIGHTS.SURVIVAL_RATE + 
+    registrationRate * WEIGHTS.REGISTRATION_RATE
+  ) * (1 - WEIGHTS.BASE_SCORE);
   
   const finalScore = Math.min(Math.round(baseScore + qualityScore), 100);
   
   return {
     index: finalScore,
     detail: {
-      sterilization_rate: S.toFixed(2),
-      survival_quality: (Q/validCount).toFixed(2),
-      adoption_rate: adoptionRate.toFixed(2),
-      survival_rate: survivalRate.toFixed(2),
-      registration_rate: registrationRate.toFixed(2),
-      base_score: Math.round(baseScore),
-      quality_score: Math.round(qualityScore)
+      sterilization_rate: sterilizationRate.toFixed(1),
+      growth_rate: growthRate.toFixed(1),
+      adoption_rate: adoptionRate.toFixed(1),
+      survival_rate: survivalRate.toFixed(1),
+      registration_rate: registrationRate.toFixed(1),
+      base_score: baseScore.toFixed(1),
+      quality_score: qualityScore.toFixed(1)
     }
   };
 }
@@ -381,7 +403,7 @@ function buildDebugInfo(stats) {
       `${campus.campus}: ${campus.count}只 (绝育率${campus.sterilizationRate}%)\n` +
       campus.areas.map(area => 
         `  - ${area.area}: ${area.count}只 (绝育率${area.sterilizationRate}%)\n` +
-        `    TNR指数: ${area.tnrIndex} [S:${area.tnrDetail.sterilization_rate}, Q:${area.tnrDetail.survival_quality}, A:${area.tnrDetail.adoption_rate}, D:${area.tnrDetail.survival_rate}, M:${area.tnrDetail.registration_rate}]`
+        `    TNR指数: ${area.tnrIndex} [S:${area.tnrDetail.sterilization_rate}, G:${area.tnrDetail.growth_rate}, A:${area.tnrDetail.adoption_rate}, D:${area.tnrDetail.survival_rate}, M:${area.tnrDetail.registration_rate}]`
       ).join('\n')
     ).join('\n\n'),
     

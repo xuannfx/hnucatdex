@@ -191,28 +191,6 @@
   text-align: right;
 }
 
-/* 列表项样式 */
-.list-item {
-  margin-bottom: 10rpx;
-  line-height: 1.4;
-}
-
-/* 信息面板 */
-.info-panel {
-  padding: 20rpx;
-  border-radius: 10rpx;
-  margin-bottom: 30rpx;
-}
-
-.info-panel.default {
-  background-color: var(--color-gray-light);
-}
-
-.info-panel.highlight {
-  background-color: #f0f9eb;
-  border-left: 4rpx solid #07c160;
-}
-
 /* 空数据提示 */
 .no-data, .empty-events {
   display: flex;
@@ -536,7 +514,7 @@
 }
 
 .area-name-header {
-  flex: 2;
+  flex: 1.5;
   padding-left: 10rpx;
 }
 
@@ -546,12 +524,12 @@
 }
 
 .area-sterilization-header {
-  flex: 2;
+  flex: 1.5;
   text-align: right;
 }
 
 .area-tnr-header {
-  flex: 3;
+  flex: 2;
   text-align: right;
   padding-right: 10rpx;
 }
@@ -573,7 +551,7 @@
 }
 
 .area-name {
-  flex: 2;
+  flex: 1.5;
   font-size: 24rpx;
   padding-left: 10rpx;
   white-space: nowrap;
@@ -586,31 +564,44 @@
   display: flex;
   align-items: center;
   height: 30rpx;
+  position: relative;
+  gap: 10rpx;
 }
 
 .area-bar {
-  height: 20rpx;
-  background-color: var(--color-primary-light);
+  height: 16rpx;
+  background-color: var(--color-gray-light);
   border-radius: 10rpx;
-  margin-right: 10rpx;
+  overflow: hidden;
+  display: flex;
+  position: relative;
   min-width: 10rpx;
-  transition: width 0.3s;
+  max-width: 100%;
+  transition: width 0.3s ease;
+}
+
+.area-bar-gender {
+  height: 100%;
+  transition: width 0.3s ease;
 }
 
 .area-count {
   font-size: 24rpx;
   color: var(--color-gray-max);
+  white-space: nowrap;
+  min-width: 30rpx;
+  text-align: left;
 }
 
 .area-sterilization {
-  flex: 2;
+  flex: 1.5;
   font-size: 24rpx;
   color: var(--color-gray-max);
   text-align: right;
 }
 
 .area-tnr {
-  flex: 3;
+  flex: 2;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -631,6 +622,78 @@
   right: 40rpx; /* 固定位置，与右侧数值保持固定距离 */
 }
 
+.tnr-value {
+  font-size: 24rpx;
+  color: var(--color-gray-max);
+  position: absolute;
+  right: 10rpx;
+}
+
+/* 说明 */
+.legend-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 20rpx;
+}
+
+.legend {
+  width: 100%;
+  margin-bottom: 20rpx;
+  background-color: var(--color-gray-light);
+  border-radius: 10rpx;
+  padding: 15rpx;
+  box-sizing: border-box;
+}
+
+.legend-title {
+  font-size: 26rpx;
+  font-weight: bold;
+  margin-bottom: 10rpx;
+}
+
+.legend-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10rpx;
+}
+
+.legend-level {
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+}
+
+.legend-level-bar {
+  width: 12rpx;
+  height: 24rpx;
+  border-radius: 6rpx;
+  margin-right: 6rpx;
+}
+
+.legend-level-text {
+  margin-left: 5rpx;
+  font-size: 20rpx;
+  color: var(--color-gray-max);
+}
+
+/* bar颜色 */
+/* 性别 */
+.gender-unknown {
+  background-color: var(--color-gray);
+}
+
+.gender-male {
+  background-color: rgba(90, 200, 250, 0.5);
+}
+
+.gender-female {
+  background-color: rgba(255, 45, 85, 0.5);
+}
+
+/* TNR */
 .tnr-good {
   background-color: #4cd964;
 }
@@ -641,71 +704,6 @@
 
 .tnr-poor {
   background-color: #ff3b30;
-}
-
-.tnr-value {
-  font-size: 24rpx;
-  color: var(--color-gray-max);
-  position: absolute;
-  right: 10rpx;
-}
-
-/* TNR指数说明 */
-.tnr-legend {
-  width: 100%;
-  margin-bottom: 20rpx;
-  background-color: var(--color-gray-light);
-  border-radius: 10rpx;
-  padding: 15rpx;
-  box-sizing: border-box;
-}
-
-.tnr-title {
-  font-size: 26rpx;
-  font-weight: bold;
-  margin-bottom: 10rpx;
-}
-
-.tnr-description {
-  font-size: 22rpx;
-  color: var(--color-gray-max);
-  margin-bottom: 10rpx;
-}
-
-.tnr-description.small {
-  display: flex;
-  flex-direction: column;
-  font-size: 20rpx;
-  color: var(--color-gray-max);
-  margin-bottom: 10rpx;
-}
-
-.tnr-description.small text {
-  margin-bottom: 2rpx;
-}
-
-.tnr-levels {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.tnr-level {
-  display: flex;
-  align-items: center;
-}
-
-.tnr-level-color {
-  width: 12rpx;
-  height: 24rpx;
-  border-radius: 6rpx;
-  margin-right: 6rpx;
-}
-
-.tnr-level-text {
-  margin-left: 5rpx;
-  font-size: 20rpx;
-  color: var(--color-gray-max);
 }
 
 /* ==================== 6. 弹窗样式 ==================== */
@@ -754,7 +752,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 16rpx;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .unknown-cat-name-popup {
@@ -770,8 +768,26 @@
 }
 
 /* 6.4 区域详情弹窗 */
-.tnr-params {
+/* 信息面板 */
+.info-panel {
+  padding: 20rpx;
+  border-radius: 10rpx;
   margin-bottom: 30rpx;
+}
+
+.info-panel.default {
+  background-color: var(--color-gray-light);
+}
+
+.info-panel.highlight {
+  background-color: #f0f9eb;
+  border-left: 4rpx solid #07c160;
+}
+
+/* 列表项样式 */
+.list-item {
+  margin-bottom: 10rpx;
+  line-height: 1.4;
 }
 
 .param-item {
@@ -780,9 +796,12 @@
   margin-bottom: 16rpx;
   flex-wrap: wrap;
 }
+.param-item:last-child {
+  margin-bottom: 0;
+}
 
 .param-label {
-  width: 160rpx;
+  width: 130rpx;
   font-size: 24rpx;
   font-weight: bold;
   color: var(--color-black-light);
