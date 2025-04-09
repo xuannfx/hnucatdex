@@ -197,7 +197,9 @@ page {
   text-align: center;
   font-size: 28rpx;
   font-weight: bold;
-  color:var(--color-gray-max);
+  background-color: var(--color-primary);
+  color: var(--color-text-onPrimary);
+  border-radius: 50rpx;
 }
 
 button.long {
@@ -206,7 +208,7 @@ button.long {
 
 button.primary {
   background-color: var(--color-primary);
-  color: var(--color-white);
+  color: var(--color-text-onPrimary);
 }
 
 /* 多种颜色的纸 */
