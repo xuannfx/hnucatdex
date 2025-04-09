@@ -342,7 +342,7 @@ Page({
       })
       return false;
     } else {
-      this.calculateSoftmaxProb(catList);
+      this.assignProbFromScore(catList);
     }
 
     let displayList = [];
@@ -375,13 +375,12 @@ Page({
     wx.hideLoading();
   },
 
-  // 根据模型输出的得分（即每个对象的score属性）计算softmax概率，并将结果放到原对象的prob属性上
-  calculateSoftmaxProb(catList) {
+  // 将score转为prob，使用yolov8的softmax
+  assignProbFromScore(catList) {
     const scores = catList.map(item => item.score);
-    const maxScore = scores.reduce((prev, cur) => Math.max(prev, cur));
-    const expScoreSum = scores.reduce((prev, cur) => prev + Math.exp(cur - maxScore), 0);
+    const expScoreSum = scores.reduce((prev, cur) => prev + cur, 0);
     catList.forEach(item => {
-      item.prob = Math.exp(item.score - maxScore) / expScoreSum;
+      item.prob = item.score / expScoreSum;
     });
   },
 

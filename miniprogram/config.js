@@ -5,7 +5,7 @@
 
 module.exports = {
   // 版本号
-  app_version: "v1.14.2",
+  app_version: "v1.15.1",
   // laf后台服务地址
   laf_url: 'https://ev4u61.laf.run',
   // laf后台服务地址（微信开发工具中），一般和上面laf_url一致就好
@@ -143,7 +143,7 @@ module.exports = {
     // 开发团队页，pages/info/devTeam/devTeam
     dev_team: {
       share_tip: "开发团队",
-      team: "程序开发（中山大学）：渔政、蓝卷、XD、zJ、ArcherJo、yw、lauzeyu\n初期资料整理：2a.m.、晋不远、莫\n以及各校区、猫咖群的小伙伴~\n非常欢迎新朋友加入设计开发哇~！",
+      team: "程序开发：\n· SYSU：渔政、蓝卷、XD、zJ、ArcherJo、yw、lauzeyu\n· HNU：xuann\n初期资料整理：xuann、晋不远、莫\n以及各校区、猫咖群的小伙伴~\n非常欢迎新朋友加入设计开发哇~！",
     },
     // 识猫页，pages/recognize/recognize
     recognize: {
