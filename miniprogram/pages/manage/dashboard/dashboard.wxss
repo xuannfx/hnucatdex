@@ -801,14 +801,14 @@
 }
 
 .param-label {
-  width: 130rpx;
+  width: 150rpx;
   font-size: 24rpx;
   font-weight: bold;
   color: var(--color-black-light);
 }
 
 .param-value {
-  width: 80rpx;
+  width: 75rpx;
   font-size: 24rpx;
   color: var(--color-black-light);
   font-weight: bold;

@@ -327,7 +327,7 @@
         <view class="info-panel default">
           <view class="section-title medium">计算公式</view>
           <view class="section-content">
-            <view>基础分 = S × 0.4</view>
+            <view>基础分 = NS × 0.4</view>
             <view>质量分 = [0.4(1-G)+0.3A+0.2s+0.1R] × 0.6</view>
             <view>TNR指数 = 基础分 + 质量分</view>
           </view>
@@ -335,9 +335,9 @@
         
         <view class="info-panel highlight">
           <view class="param-item">
-            <text class="param-label">S (绝育率):</text>
-            <text class="param-value">{{currentAreaDetails.tnrDetail.sterilization_rate}}%</text>
-            <text class="param-desc">绝育数/总猫数</text>
+            <text class="param-label">NS (净绝育):</text>
+            <text class="param-value">{{currentAreaDetails.tnrDetail.net_sterilization_rate}}%</text>
+            <text class="param-desc">现存绝育/现存数</text>
           </view>
           
           <view class="param-item">
@@ -368,7 +368,8 @@
         <view class="info-panel default">
           <view class="section-title medium">计算过程</view>
           <view class="section-content">
-            <view>基础分 = {{currentAreaDetails.tnrDetail.sterilization_rate}} × 40 = {{currentAreaDetails.tnrDetail.base_score}}</view>
+            <view wx:if="{{currentAreaDetails.tnrDetail.adoption_rate == 100}}">基础分 = 100 × 0.4 = {{currentAreaDetails.tnrDetail.base_score}}</view>
+            <view wx:else>基础分 = {{currentAreaDetails.tnrDetail.net_sterilization_rate}} × 0.4 = {{currentAreaDetails.tnrDetail.base_score}}</view>
             <view>质量分 = (0.4×(1-{{currentAreaDetails.tnrDetail.growth_rate}}) + 0.3×{{currentAreaDetails.tnrDetail.adoption_rate}} + 0.2×{{currentAreaDetails.tnrDetail.survival_rate}} + 0.1×{{currentAreaDetails.tnrDetail.registration_rate}}) × 60 = {{currentAreaDetails.tnrDetail.quality_score}}</view>
             <view>TNR指数 = {{currentAreaDetails.tnrDetail.base_score}} + {{currentAreaDetails.tnrDetail.quality_score}} = {{currentAreaDetails.tnrIndex}}</view>
           </view>
@@ -378,7 +379,7 @@
           <view class="section-title medium">指标说明</view>
           <view class="section-content">
             <view class="list-item">· TNR指数满分为100分，分为基础分(40分)和质量分(60分)</view>
-            <view class="list-item">· 基础分完全由绝育率决定，绝育率100%可获得40分基础分</view>
+            <view class="list-item">· 基础分由净绝育率决定，若当区域猫动态清零时，基础分赋满</view>
             <view class="list-item">· 质量分由四个指标加权计算：增长率(40%)、领养率(30%)、生存率(20%)、在册率(10%)</view>
             <view class="list-item">· 已领养的猫咪即使后续死亡或失踪，也不会计入死亡率或失踪率</view>
           </view>

@@ -10,6 +10,20 @@ Page({
     text_cfg: text_cfg,
     github_link: "https://github.com/sysucats/zhongdamaopu",
     update_log: [{
+      version: "v1.15.2",
+      content: [
+        "添加数据看板（仅对管理员开放）",
+        "优化主页状态筛选",
+        "优化喵友圈动态加载",
+      ],
+      time: "2025/4/10"
+    }, {
+      version: "v1.15.1",
+      content: [
+        "统一主题色背景的文字颜色变量",
+      ],
+      time: "2025/3/14"
+    }, {
       version: "v1.15.0",
       content: [
         "猫猫详情页面支持查看疫苗记录",
@@ -19,7 +33,7 @@ Page({
         "优化喵友圈页面性能和缓存策略",
         "统一管理页面权限提示样式",
       ],
-      time: "2024/3/14"
+      time: "2025/3/14"
     }, {
       version: "v1.14.4",
       content: [

@@ -258,6 +258,13 @@ function calculateTNRIndex(allCats, sterilizedCats, monthStart) {
     !cat.to_star
   );
   
+  // 筛选出当前存活的未领养猫
+  const currentAliveNonAdoptedCats = allCats.filter(cat => 
+    cat.adopt !== 1 && 
+    !cat.missing && 
+    !cat.to_star
+  );
+  
   // 获取本月新增的猫
   N = allCats.filter(cat => 
     cat.create_time && 
@@ -284,8 +291,12 @@ function calculateTNRIndex(allCats, sterilizedCats, monthStart) {
   const totalNonAdoptedCount = Math.max(nonAdoptedCats.length, 1);
   
   // ------ 计算各项指标 ------
-  // 绝育率
+  // 总绝育率
   const sterilizationRate = calculateRate(sterilizedCats.length, totalCats);
+  // 计算净绝育率
+  const netSterilizationRate = currentAliveNonAdoptedCats.length > 0 
+    ? calculateRate(currentAliveSterilizedCats.length, currentAliveNonAdoptedCats.length)
+    : -; // 如果没有未领养的猫（100%领养率），则令净绝育率为100%
   // 种群增长率
   const initialCats = nonAdoptedCats.length - N; // 本月初始猫数量
   const growthRate = initialCats > 0 ? calculateRate(N - (D + M), initialCats) : 0;
@@ -297,7 +308,11 @@ function calculateTNRIndex(allCats, sterilizedCats, monthStart) {
   const adoptionRate = 100 - calculateRate(nonAdoptedCats.length,  totalCats);
   
   // 分段计算得分
-  const baseScore = sterilizationRate * WEIGHTS.BASE_SCORE;
+  // 如果领养率为100%，则直接给予最高基础分，不考虑净绝育率
+  const baseScore = adoptionRate === 100
+    ? 100 * WEIGHTS.BASE_SCORE
+    : netSterilizationRate * WEIGHTS.BASE_SCORE;
+  
   const qualityScore = (
     Math.max(0, 100 - growthRate) * WEIGHTS.GROWTH_RATE + 
     adoptionRate * WEIGHTS.ADOPTION_RATE + 
@@ -311,6 +326,7 @@ function calculateTNRIndex(allCats, sterilizedCats, monthStart) {
     index: finalScore,
     detail: {
       sterilization_rate: sterilizationRate.toFixed(1),
+      net_sterilization_rate: netSterilizationRate.toFixed(1),
       growth_rate: growthRate.toFixed(1),
       adoption_rate: adoptionRate.toFixed(1),
       survival_rate: survivalRate.toFixed(1),
@@ -403,7 +419,7 @@ function buildDebugInfo(stats) {
       `${campus.campus}: ${campus.count}只 (绝育率${campus.sterilizationRate}%)\n` +
       campus.areas.map(area => 
         `  - ${area.area}: ${area.count}只 (绝育率${area.sterilizationRate}%)\n` +
-        `    TNR指数: ${area.tnrIndex} [S:${area.tnrDetail.sterilization_rate}, G:${area.tnrDetail.growth_rate}, A:${area.tnrDetail.adoption_rate}, D:${area.tnrDetail.survival_rate}, M:${area.tnrDetail.registration_rate}]`
+        `    TNR指数: ${area.tnrIndex} [NS:${area.tnrDetail.net_sterilization_rate}, G:${area.tnrDetail.growth_rate}, A:${area.tnrDetail.adoption_rate}, D:${area.tnrDetail.survival_rate}, M:${area.tnrDetail.registration_rate}]`
       ).join('\n')
     ).join('\n\n'),
     
