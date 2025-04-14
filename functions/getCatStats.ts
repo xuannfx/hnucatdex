@@ -258,7 +258,7 @@ function calculateTNRIndex(allCats, sterilizedCats, monthStart) {
     !cat.to_star
   );
   
-  // 筛选出当前存活的未领养猫
+  // 筛选出现存猫（总数除去失踪、死亡、领养）
   const currentAliveNonAdoptedCats = allCats.filter(cat => 
     cat.adopt !== 1 && 
     !cat.missing && 
@@ -296,7 +296,7 @@ function calculateTNRIndex(allCats, sterilizedCats, monthStart) {
   // 计算净绝育率
   const netSterilizationRate = currentAliveNonAdoptedCats.length > 0 
     ? calculateRate(currentAliveSterilizedCats.length, currentAliveNonAdoptedCats.length)
-    : -; // 如果没有未领养的猫（100%领养率），则令净绝育率为100%
+    : 100; // 如果没有未领养的猫（100%领养率），则令净绝育率为100%
   // 种群增长率
   const initialCats = nonAdoptedCats.length - N; // 本月初始猫数量
   const growthRate = initialCats > 0 ? calculateRate(N - (D + M), initialCats) : 0;
