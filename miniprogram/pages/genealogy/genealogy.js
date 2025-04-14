@@ -241,68 +241,46 @@ Page({
     }
     filters.push(colour_item);
 
-    // 状态筛选大类
+    // 状态过滤器
     var status_item = {
       key: 'status',
       name: '状态',
-      category: []
-    };
-
-    // 添加全部状态选项
-    status_item.category.push({
-      name: '全部状态',
-      items: [],
-      all_active: true
-    });
-
-    // 领养状态选项
-    var adopt_status = config.cat_status_adopt.map((name, i) => {
-      return {
-        name: name,
-        value: i, // 数据库里存的
-      };
-    });
-    
-    var adopt_category = {
-      name: '领养状态',
-      key: 'adopt',
-      items: adopt_status,
-      all_active: false
-    };
-
-    // 绝育状态选项
-    var neutered_category = {
-      name: '绝育状态',
-      key: 'sterilized',
-      items: [
-        { name: "已绝育", value: true },
-        { name: "待绝育", value: false }
+      category: [
+        { name: '全部状态', items: [], all_active: true },
+        {
+          name: '领养状态',
+          items: [
+            { name: "未知", value: null },
+            ...config.cat_status_adopt.map((name, i) => ({ name: name, value: i }))
+          ],
+          all_active: false
+        },
+        {
+          name: '绝育状态',
+          items: [
+            { name: '待绝育', value: false },
+            { name: '已绝育', value: true }
+          ],
+          all_active: false
+        },
+        {
+          name: '其他',
+          items: [
+            { name: '未失踪', value: { field: 'missing', condition: false } },
+            { name: '已失踪', value: { field: 'missing', condition: true } },
+            { name: '去往喵星', value: { field: 'to_star', condition: true } }
+          ],
+          all_active: false
+        }
       ],
-      all_active: false
+      active: false // 默认不激活，除非是第一个过滤器
     };
-
-    // 其他状态选项（合并失踪和去往喵星）
-    var other_category = {
-      name: '其他',
-      key: 'other',
-      items: [
-        { name: "未失踪", field: "missing", value: false },
-        { name: "已失踪", field: "missing", value: true },
-        { name: "去往喵星", field: "to_star", value: true }
-      ],
-      all_active: false
-    };
-
-    // 添加各种状态子类别
-    status_item.category.push(adopt_category);
-    status_item.category.push(neutered_category);
-    status_item.category.push(other_category);
-
-    // 添加状态大类到筛选器
     filters.push(status_item);
 
-    // 激活默认筛选器
-    filters[0].active = true;  // 校区
+    // 默认把第一个先激活了
+    if (filters.length > 0 && !filters.some(f => f.active)) {
+       filters[0].active = true;
+    }
     console.log(filters);
     this.newUserTip();
     this.setData({
@@ -615,6 +593,9 @@ Page({
     } else {
       filters[filters_sub].category[0].all_active = false; // 取消'全部'的激活，默认第0个是'全部'
       category.all_active = all_active; // 点击的category状态取反
+      /* for (let k = 0, len = category.items.length; k < len; ++k) {  // 其下的所有项目激活状态与category一致
+        category.items[k].active = all_active;
+      } */
       for (let k = 0, len = category.items.length; k < len; ++k) { // 反激活其下所有sub
         category.items[k].active = false;
       }
@@ -635,6 +616,12 @@ Page({
 
     category.items[index].active = !category.items[index].active; // 激活状态取反
     filters[filters_sub].category[0].all_active = false; // 取消'全部'的激活，默认第0个是'全部'
+    /* // 看看是否要把category激活/反激活
+    var counter = 0;
+    for (let k = 0, len = category.items.length; k < len; ++k) {
+      if (category.items[k].active) ++counter;
+    }
+    category.all_active = (counter == category.items.length); */
     category.all_active = false; // 直接反激活category
 
     const fLegal = this.fCheckLegal(filters);
@@ -661,223 +648,177 @@ Page({
     }
     return true;
   },
-
-  // 构建状态查询条件
-  _buildStatusQuery: function (statusFilter, _) {
-    const conditions = [];
-    if (statusFilter.category[0].all_active) { // 选择了'全部状态'
-      return conditions;
-    }
-
-    for (const category of statusFilter.category) {
-      if (category.name === '全部状态') continue;
-
-      const fieldKey = category.key;
-      const isAllCategoryActive = category.all_active;
-      let selectedValues = [];
-      let specificConditions = []; // 用于存储 _.or 等复杂条件
-
-      if (!isAllCategoryActive) {
-          selectedValues = category.items
-             .filter(item => item.active)
-             .map(item => ({ field: item.field, value: item.value })); // 存储 field 和 value
-      } else {
-        // 如果整个分类激活，根据 key 特殊处理
-        if (fieldKey === 'other') {
-            category.items.forEach(item => {
-                const field = item.field;
-                const value = item.value;
-                // 特殊处理 other 分类下的未失踪和已失踪
-                if (field === 'missing') {
-                    if (value === false) {
-                        // 未失踪包含 false 和不存在
-                        specificConditions.push(_.or([{ [field]: false }, { [field]: _.exists(false) }]));
-                    } else {
-                        specificConditions.push({ [field]: value });
-                    }
-                } else {
-                     specificConditions.push({ [field]: value });
-                }
-            });
-           // 'other' 类别特殊，直接添加到主 conditions
-           // 注意：这里需要用 OR 连接 other 内部的条件
-           if (specificConditions.length > 0) {
-               conditions.push(_.or(specificConditions));
-           }
-           continue; // 处理完 other，继续下一个 category
-        } else if (fieldKey !== 'sterilized' && fieldKey !== 'adopt') {
-          // 非特殊处理的，选中类别等于选中所有子项
-           selectedValues = category.items.map(item => ({ field: item.field, value: item.value })); // 存储 field 和 value
-        }
-        // 对于 sterilized 和 adopt，选中整个类别表示不筛选该项
-      }
-
-      // 处理非 other 类别的选中项
-      if (fieldKey !== 'other' && selectedValues.length > 0) {
-          if (fieldKey === 'sterilized') {
-             // 绝育: 待绝育(false) 包含 exists(false)
-             const hasFalse = selectedValues.some(item => item.value === false);
-             const hasTrue = selectedValues.some(item => item.value === true);
-             if (!isAllCategoryActive) { // 仅当未全选分类时处理
-                 if (hasFalse && !hasTrue) {
-                    specificConditions.push(_.or([{ [fieldKey]: false }, { [fieldKey]: _.exists(false) }]));
-                 } else if (hasTrue && !hasFalse) {
-                    specificConditions.push({ [fieldKey]: true });
-                 }
-                 // else (both true and false selected) -> no condition added
-             }
-         } else if (fieldKey === 'adopt') {
-             // 领养: 未领养(0) 包含 exists(false)
-             const unadoptedValue = 0;
-             const hasUnadopted = selectedValues.some(item => item.value === unadoptedValue);
-             const otherSelectedValues = selectedValues.filter(item => item.value !== unadoptedValue).map(item => item.value);
-
-             if (!isAllCategoryActive) { // 仅当未全选分类时处理
-                 if (hasUnadopted) {
-                    const orConditions = [{ [fieldKey]: unadoptedValue }, { [fieldKey]: _.exists(false) }];
-                    if (otherSelectedValues.length > 0) {
-                       orConditions.push({ [fieldKey]: _.in(otherSelectedValues) });
-                    }
-                    specificConditions.push(_.or(orConditions));
-                 } else if (otherSelectedValues.length > 0) {
-                    specificConditions.push({ [fieldKey]: _.in(otherSelectedValues) });
-                 }
-             }
-         } else { // 其他普通状态字段
-            const values = selectedValues.map(item => item.value);
-            if (values.length > 0) {
-               specificConditions.push({ [fieldKey]: _.in(values) });
-            }
-         }
-
-         if (specificConditions.length > 0) {
-             // 如果产生了多个 specificConditions (理论上大部分情况只有一个)
-             // 如果只有一个，直接 push 对象；多个则用 and 连接 (虽然目前逻辑不会产生多个)
-             if (specificConditions.length === 1) {
-                 conditions.push(specificConditions[0]);
-             } else {
-                 conditions.push(_.and(specificConditions)); // 保留以防万一
-             }
-         }
-      }
-      // 处理 other 分类下单个选中项的情况
-      else if (fieldKey === 'other' && selectedValues.length > 0) {
-          selectedValues.forEach(item => {
-              const field = item.field;
-              const value = item.value;
-              if (field === 'missing' && value === false) {
-                  specificConditions.push(_.or([{ [field]: false }, { [field]: _.exists(false) }]));
-              } else {
-                  specificConditions.push({ [field]: value });
-              }
-          });
-          if (specificConditions.length > 0) {
-              conditions.push(_.or(specificConditions));
-          }
-      }
-
-    }
-    // 对于 status 内部不同 category 的条件，它们之间应该是 OR 关系
-    // 但目前的 UI 设计和代码逻辑是 AND 关系 (例如选了'待领养' AND '已绝育')
-    // 所以直接返回 conditions 数组，由外层统一 and
-    return conditions;
-  },
-  
   fGet: async function () {
     const db = await cloud.databaseAsync();
     const _ = db.command;
     const filters = this.data.filters;
-    var res = []; // 存储最终 AND 条件
-
+    var res = []; // 先把查询条件全部放进数组，最后用_.and包装，这样方便跨字段使用or逻辑
+    // 这些是点击选择的filters
     for (const mainF of filters) {
+      // 把数据库要用的key拿出来
       const key = mainF.key;
 
+      // 状态过滤器
       if (key === 'status') {
-        const statusConditions = this._buildStatusQuery(mainF, _);
-        if (statusConditions.length > 0) {
-          res.push(...statusConditions); // 将状态条件添加到主条件列表
-        }
-        continue; // 处理完 status，跳到下一个主筛选器
-      }
+        if (mainF.category[0].all_active) continue; // 如果全部状态被激活则跳过
 
-      // --- 处理非 status 的筛选器 ---
-      if (mainF.category[0].all_active) continue; // 选择了'全部', 跳过
+        let adoptConditions = [];
+        let sterilizedValue = undefined;
+        let missingValue = undefined;
+        let toStarValue = undefined;
 
-      var selected = []; // 储存已经选中的项
-      const cateFilter = Boolean(mainF.cateKey);
-      let cateKey = '';
-      let cateSelected = [];
-      if (cateFilter) {
-          cateKey = mainF.cateKey;
-      }
+        // 遍历子类别 索引 > 0
+        for (let i = 1; i < mainF.category.length; i++) {
+          const subCategory = mainF.category[i];
+          let subCategorySelectedValues = [];
 
-      for (const category of mainF.category) {
-        if (category.name === mainF.category[0].name) continue; // 跳过'全部xx'分类本身
-
-        let cateKeyPushed = false;
-        const isAllCategoryActive = category.all_active;
-
-        for (const item of category.items) {
-          if (isAllCategoryActive || item.active) {
-            let choice = item.value !== undefined ? item.value : item.name;
-            if (item.value === null) {
-               choice = _.exists(false); // 处理字段不存在的情况
+          for (const item of subCategory.items) {
+            if (subCategory.all_active || item.active) {
+              subCategorySelectedValues.push(item.value);
             }
-            // 对于 _.exists(false) 的情况，不能直接 push 到 selected 数组给 _.in 使用
-            if (typeof choice === 'object' && choice._internalType === 'exists') {
-                res.push({[key]: choice}); // 直接添加到主条件
-            } else {
-                selected.push(choice);
-            }
+          }
 
-            if (cateFilter && !cateKeyPushed && category.name) { // 确保 category.name 存在
-              cateSelected.push(category.name);
-              cateKeyPushed = true;
+          if (subCategorySelectedValues.length > 0) {
+            switch (subCategory.name) {
+              case '领养状态':
+                adoptConditions.push(...subCategorySelectedValues);
+                break;
+              case '绝育状态':
+                 // 最后一个有效选项生效
+                 if (subCategorySelectedValues.includes(true) && subCategorySelectedValues.includes(false)) {
+                     sterilizedValue = undefined; // 忽略此过滤器？或设置默认值？
+                 } else if (subCategorySelectedValues.includes(true)) {
+                    sterilizedValue = true;
+                 } else if (subCategorySelectedValues.includes(false)) {
+                    sterilizedValue = false;
+                 }
+                break;
+              case '其他':
+                 let hasMissingTrue = false;
+                 let hasMissingFalse = false;
+                 for(const val of subCategorySelectedValues) {
+                    if (val.field === 'missing') {
+                        if (val.condition === true) hasMissingTrue = true;
+                        if (val.condition === false) hasMissingFalse = true;
+                    }
+                    if (val.field === 'to_star' && val.condition === true) {
+                       toStarValue = true;
+                    }
+                 }
+                 // missing
+                 if (hasMissingTrue && hasMissingFalse) {
+                     missingValue = undefined;
+                 } else if (hasMissingTrue) {
+                     missingValue = true;
+                 } else if (hasMissingFalse) {
+                     missingValue = false;
+                 }
+                break;
             }
           }
         }
+
+        // 构建状态的查询条件
+        if (adoptConditions.length > 0) {
+          let adoptQueries = [];
+          if (adoptConditions.includes(null)) adoptQueries.push(_.exists(false));
+          const numericAdopt = adoptConditions.filter(v => v !== null);
+          if (numericAdopt.length > 0) adoptQueries.push(_.in(numericAdopt));
+          if (adoptQueries.length > 0) res.push({ adopt: adoptQueries.length === 1 ? adoptQueries[0] : _.or(adoptQueries) });
+        }
+        if (sterilizedValue !== undefined) {
+          res.push({ sterilized: sterilizedValue === false ? _.or(_.eq(false), _.exists(false)) : true });
+        }
+        if (missingValue !== undefined) {
+          res.push({ missing: missingValue === false ? _.or(_.eq(false), _.exists(false)) : true });
+        }
+        if (toStarValue === true) {
+          res.push({ to_star: true });
+        }
+        continue; // 完成状态处理，移至下一个主过滤器
       }
 
-      // console.log(key, selected);
-      if (selected.length > 0) {
-         res.push({ [key]: _.in(selected) });
-      }
-      if (cateFilter && cateSelected.length > 0) {
-         res.push({ [cateKey]: _.in(cateSelected) });
+      // 处理其他过滤器 (area, colour)
+      if (key !== 'status') { // 处理非 status 过滤器
+         if (mainF.category[0].all_active) continue;
+
+         var selected = [];
+         const cateFilter = Boolean(mainF.cateKey);
+         if (cateFilter) {
+           var cateKey = mainF.cateKey;
+           var cateSelected = [];
+         }
+
+         for (const category of mainF.category) {
+           let cateKeyPushed = false;
+           for (const item of category.items) {
+              // area/colour：category.all_active 应用于像特定校区这样的子分组
+              if (category.all_active || item.active) {
+                var choice = item.name; // 对于 area/colour
+                if (item.value !== undefined) {
+                   choice = item.value;
+                }
+                 if (item.value === null) {
+                    choice = _.exists(false);
+                 }
+                selected.push(choice);
+
+                if (cateFilter && !cateKeyPushed && category.name) { // 确保分类名称存在
+                  cateSelected.push(category.name);
+                  cateKeyPushed = true;
+                }
+              }
+           }
+         }
+
+         if(selected.length > 0) {
+             let hasNull = selected.some(val => typeof val === 'object' && val !== null && val._internalType === 'db.command.exists');
+             let nonNullSelected = selected.filter(val => !(typeof val === 'object' && val !== null && val._internalType === 'db.command.exists'));
+
+             let condition = {};
+             let fieldCondition = [];
+             if (nonNullSelected.length > 0) fieldCondition.push(_.in(nonNullSelected));
+             if (hasNull) fieldCondition.push(_.exists(false));
+
+             if (fieldCondition.length > 1) condition[key] = _.or(fieldCondition);
+             else if (fieldCondition.length === 1) condition[key] = fieldCondition[0];
+             else if (hasNull) condition[key] = _.exists(false);
+             else continue; // 如果此键没有任何选中项则跳过
+
+             res.push(condition);
+             if (cateFilter && cateSelected.length > 0) res.push({ [cateKey]: _.in(cateSelected) });
+         }
       }
     }
-    // --- 处理非 status 的筛选器结束 ---
 
+    // 判断一下filters生效没有
     this.setData({
-      filters_active: res.length > 0 || this.data.filters_input.length > 0
+      filters_active: res.length > 0
     });
 
-    // 处理文字搜索
+    // 如果用户还输入了东西，也要一起搜索
     const filters_input = regReplace(this.data.filters_input);
     if (filters_input.length) {
+
       var search_str = '';
-      // 构建 (.*word1.*)|(.*word2.*) 形式的正则
       for (const n of filters_input.trim().split(' ')) {
-        if (n) { // 避免空字符串
-          const escaped_n = n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // 转义正则特殊字符
-          search_str += (search_str ? '|' : '') + `(.*${escaped_n}.*)`;
+        if (search_str === '') {
+          search_str += '(.*' + n + '.*)';
+        } else {
+          search_str += '|(.*' + n + '.*)';
         }
       }
-
-      if (search_str) { // 确保搜索字符串不为空
-         let regexp = db.RegExp({
-             regexp: search_str,
-             options: 'i', // 使用 'i' 进行不区分大小写搜索 ('is' 中的 's' 通常指 dotall，这里不需要)
-         });
-         res.push(_.or([{
-           name: regexp
-         }, {
-           nickname: regexp
-         }]));
-      }
+      // res['name'] = _.in(filters_input.trim().split(' '));
+      let regexp = db.RegExp({
+        regexp: search_str,
+        options: 'is',  // 'g' 在 laf 这边会报错
+      });
+      res.push(_.or([{
+        name: regexp
+      }, {
+        nickname: regexp
+      }]));
     }
-
-    // console.log("Final Query:", res);
     return res.length ? _.and(res) : {};
   },
   fComfirm: function (e) {
@@ -1008,33 +949,27 @@ Page({
     this.lockBtn();
 
     var filters = this.data.filters;
-    // 找到状态大类
-    var statusIndex = filters.findIndex(x => x.key === "status");
-    // 找到领养状态子类
-    var adoptCategory = filters[statusIndex].category.find(x => x.key === "adopt");
-    
+    var filters_sub = filters.findIndex((x) => {
+      this.unlockBtn();
+      return x.key === "adopt"
+    });
+
     const target_status = config.cat_status_adopt_target;
-    const target_index = config.cat_status_adopt.findIndex(x => x === target_status);
-    
-    // 找到对应的选项
-    const itemIndex = adoptCategory.items.findIndex(x => x.value === target_index);
-    
-    if (adoptCategory.items[itemIndex].active) {
+    const category = filters[filters_sub].category[0];
+    const index = category.items.findIndex((x) => {
+      return x.name === target_status
+    }); // 寻找领养中
+
+    if (category.items[index].active) {
       // 已经激活了
       this.unlockBtn();
       return false;
     }
 
-    // 取消全部状态
-    filters[statusIndex].category[0].all_active = false;
-    
-    // 激活领养状态类别，但不激活子标签
-    adoptCategory.all_active = true;
-    
-    // 取消所有子标签的激活状态
-    for (let i = 0; i < adoptCategory.items.length; i++) {
-      adoptCategory.items[i].active = false;
-    }
+    category.items[index].active = !category.items[index].active; // 激活状态取反
+    filters[filters_sub].category[0].all_active = false; // 取消'全部'的激活，默认第0个是'全部'
+
+    category.all_active = false; // 直接反激活category
 
     const fLegal = this.fCheckLegal(filters);
     this.setData({
