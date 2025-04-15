@@ -135,7 +135,6 @@ Page({
           { name: db.RegExp({ regexp: keyword, options: 'i' }) },
           { nickname: db.RegExp({ regexp: keyword, options: 'i' }) }
         ]))
-        .limit(10)
         .get();
       
       // 加载头像
