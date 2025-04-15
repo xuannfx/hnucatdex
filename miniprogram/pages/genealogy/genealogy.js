@@ -949,27 +949,46 @@ Page({
     this.lockBtn();
 
     var filters = this.data.filters;
-    var filters_sub = filters.findIndex((x) => {
-      this.unlockBtn();
-      return x.key === "adopt"
-    });
+    // 查找 status 过滤器的索引
+    var status_filter_index = filters.findIndex(x => x.key === "status");
+
+    // 查找领养状态子类别的索引
+    var adopt_category_index = filters[status_filter_index].category.findIndex(
+      category => category.name === "领养状态"
+    );
 
     const target_status = config.cat_status_adopt_target;
-    const category = filters[filters_sub].category[0];
-    const index = category.items.findIndex((x) => {
-      return x.name === target_status
-    }); // 寻找领养中
+    const adoptCategory = filters[status_filter_index].category[adopt_category_index];
+    
+    // 查找目标状态在子类别中的索引
+    const target_index = adoptCategory.items.findIndex(item => item.name === target_status);
 
-    if (category.items[index].active) {
+    if (target_index === -1) {
+      console.log("[点击领养按钮] 找不到目标领养状态");
+      this.unlockBtn();
+      return false;
+    }
+
+    if (adoptCategory.items[target_index].active) {
       // 已经激活了
       this.unlockBtn();
       return false;
     }
 
-    category.items[index].active = !category.items[index].active; // 激活状态取反
-    filters[filters_sub].category[0].all_active = false; // 取消'全部'的激活，默认第0个是'全部'
+    // 重置所有状态选项
+    for (let i = 0; i < filters[status_filter_index].category.length; i++) {
+      const category = filters[status_filter_index].category[i];
+      category.all_active = (i === 0) ? false : false; // 全部设为false，包括"全部状态"
+      
+      if (category.items) {
+        for (let j = 0; j < category.items.length; j++) {
+          category.items[j].active = false;
+        }
+      }
+    }
 
-    category.all_active = false; // 直接反激活category
+    // 激活目标领养状态
+    adoptCategory.items[target_index].active = true;
 
     const fLegal = this.fCheckLegal(filters);
     this.setData({
@@ -980,7 +999,8 @@ Page({
     await Promise.all([
       this.reloadCats(),
       this.showFilterTip()
-    ])
+    ]);
+    
     this.unlockBtn();
   },
 
