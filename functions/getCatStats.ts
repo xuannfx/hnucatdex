@@ -28,7 +28,7 @@ export default async function (ctx: FunctionContext) {
     missing: _.neq(true)
   };
   
-  // 一次性查询所有基础数据，减少数据库连接次数
+  // 一次性查询所有基础数据
   const [
     numAllCats,
     numSterilized, 
@@ -38,7 +38,7 @@ export default async function (ctx: FunctionContext) {
     numDeceased,
     numCurrentSterilized,
     genderStats,
-    monthStats
+    monthData
   ] = await Promise.all([
     db.collection('cat').count(),
     db.collection('cat').where({ sterilized: true }).count(),
@@ -48,14 +48,13 @@ export default async function (ctx: FunctionContext) {
     db.collection('cat').where({ to_star: true }).count(),
     db.collection('cat').where({ ...currentCatsQf, sterilized: true }).count(),
     getGenderStats(db),
-    getMonthStats(db, monthStart, _)
+    getMonthData(db, monthStart, _)
   ]);
 
   // 同时查询校区和花色数据
-  const [campusStats, colourStats, latestEvents] = await Promise.all([
+  const [campusStats, colourStats] = await Promise.all([
     getCampusStats(db, campuses, areas, _, monthStart),
-    getColourStats(db, colours),
-    getLatestEvents(db)
+    getColourStats(db, colours)
   ]);
 
   // 预计算的比率
@@ -81,13 +80,13 @@ export default async function (ctx: FunctionContext) {
       adoption: adoptionRate
     },
     gender: genderStats,
-    month: monthStats,
+    month: monthData.stats,
     campus: campusStats,
     colour: colourStats,
-    events: latestEvents
+    events: monthData.events
   };
 
-  // 调试信息构建
+  // 调试
   const debugInfo = buildDebugInfo(stats);
 
   return {
@@ -121,25 +120,6 @@ async function getGenderStats(db) {
       rate: calculateRate(unknownCats.data.length, totalCats),
       cats: unknownCats.data.map(cat => cat.name || '未命名')
     }
-  };
-}
-
-// 获取本月数据
-async function getMonthStats(db, monthStart, _) {
-  const [newCats, adopted, sterilized, missing, deceased] = await Promise.all([
-    db.collection('cat').where({ create_time: _.gte(monthStart) }).count(),
-    db.collection('cat').where({ adopt: 1, adopt_time: _.gte(monthStart) }).count(),
-    db.collection('cat').where({ sterilized: true, sterilized_time: _.gte(monthStart) }).count(),
-    db.collection('cat').where({ missing: true, missing_time: _.gte(monthStart) }).count(),
-    db.collection('cat').where({ to_star: true, deceased_time: _.gte(monthStart) }).count()
-  ]);
-  
-  return {
-    newCats: newCats.total,
-    adopted: adopted.total,
-    sterilized: sterilized.total,
-    missing: missing.total,
-    deceased: deceased.total
   };
 }
 
@@ -177,7 +157,7 @@ async function getAreaStats(db, area, _, monthStart) {
   const areaName = area.name;
   const campus = area.campus;
   
-  // 一次性获取区域内所有猫的详细信息，包括性别
+  // 获取区域内所有猫的详细信息
   const allCats = await db.collection('cat')
     .where({ campus, area: areaName })
     .field({
@@ -337,40 +317,64 @@ function calculateTNRIndex(allCats, sterilizedCats, monthStart) {
   };
 }
 
-// 获取最新事件
-async function getLatestEvents(db) {
-  // 使用聚合管道合并查询
-  const eventQueries = [
-    { type: '新猫', time_field: 'create_time', condition: { create_time: db.command.exists(true) } },
-    { type: '绝育', time_field: 'sterilized_time', condition: { sterilized: true, sterilized_time: db.command.exists(true) } },
-    { type: '领养', time_field: 'adopt_time', condition: { adopt: 1, adopt_time: db.command.exists(true) } },
-    { type: '失踪', time_field: 'missing_time', condition: { missing: true, missing_time: db.command.exists(true) } },
-    { type: '喵星', time_field: 'deceased_time', condition: { to_star: true, deceased_time: db.command.exists(true) } }
+// 获取本月数据和最新事件
+async function getMonthData(db, monthStart, _) {
+  // 定义事件类型和对应字段
+  const eventTypes = [
+    { type: '新猫', time_field: 'create_time', condition: { create_time: _.gte(monthStart) } },
+    { type: '绝育', time_field: 'sterilized_time', condition: { sterilized: true, sterilized_time: _.gte(monthStart) } },
+    { type: '领养', time_field: 'adopt_time', condition: { adopt: 1, adopt_time: _.gte(monthStart) } },
+    { type: '失踪', time_field: 'missing_time', condition: { missing: true, missing_time: _.gte(monthStart) } },
+    { type: '喵星', time_field: 'deceased_time', condition: { to_star: true, deceased_time: _.gte(monthStart) } }
   ];
   
-  // 并行获取每种事件类型的最新5条
+  // 获取每种事件类型的统计和详细数据
   const eventResults = await Promise.all(
-    eventQueries.map(query => 
-      db.collection('cat')
+    eventTypes.map(async query => {
+      // 获取事件数量
+      const count = await db.collection('cat').where(query.condition).count();
+      
+      // 获取事件详情
+      const details = await db.collection('cat')
         .where(query.condition)
         .field({ name: 1, _id: 1, [query.time_field]: 1 })
         .orderBy(query.time_field, 'desc')
-        .limit(5)
-        .get()
-        .then(res => res.data.map(cat => ({
-          type: query.type,
-          date: formatDate(cat[query.time_field]),
-          timestamp: cat[query.time_field],
-          name: cat.name,
-          id: cat._id
-        })))
-    )
+        .get();
+      
+      // 格式化事件详情
+      const events = details.data.map(cat => ({
+        type: query.type,
+        date: formatDate(cat[query.time_field]),
+        timestamp: cat[query.time_field],
+        name: cat.name,
+        id: cat._id
+      }));
+      
+      return {
+        type: query.type,
+        count: count.total,
+        events: events
+      };
+    })
   );
   
+  // 提取计数统计
+  const stats = {
+    newCats: eventResults.find(r => r.type === '新猫').count,
+    sterilized: eventResults.find(r => r.type === '绝育').count,
+    adopted: eventResults.find(r => r.type === '领养').count,
+    missing: eventResults.find(r => r.type === '失踪').count,
+    deceased: eventResults.find(r => r.type === '喵星').count
+  };
+  
   // 合并并排序所有事件
-  return [].concat(...eventResults)
-    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-    .slice(0, 10);
+  const allEvents = [].concat(...eventResults.map(r => r.events))
+    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+  
+  return {
+    stats: stats,
+    events: allEvents
+  };
 }
 
 // 计算比率
@@ -394,7 +398,7 @@ function formatDate(dateStr) {
   return `${date.getFullYear()}年${(date.getMonth() + 1)}月${date.getDate()}日`;
 }
 
-// 构建调试信息对象
+// 调试
 function buildDebugInfo(stats) {
   return {
     "总猫数": `${stats.basic.total}只`,
