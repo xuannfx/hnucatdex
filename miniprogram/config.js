@@ -3,14 +3,18 @@
 // 不要删除设置项，例如识猫页，删除会导致编译出错！
 // 修改时频繁保存、频繁编译，发现改错了立马撤销
 
+
 module.exports = {
   // 版本号
-  app_version: "v1.15.1",
-  // laf后台服务地址
-  laf_url: 'https://ev4u61.laf.run',
-  // laf后台服务地址（微信开发工具中），一般和上面laf_url一致就好
-  laf_dev_url: 'https://ev4u61.laf.run',
-  // 使用私有的腾讯云cos存储，需要url签名
+  app_version: "v1.16.3",
+  // 小程序appid
+  app_id: "wxc91fb069737b7b84",
+  // EMAS空间ID
+  space_id: "mp-14d0e5ee-bb08-41de-8005-0aaa12566478",
+  // 服务空间 secret key
+  space_secret: require('./appSecret').space_secret,
+  // 服务空间地址Api Endpoint
+  space_endpoint: "https://api.next.bspapp.com",
   use_private_tencent_cos: true,
   // 私有的腾讯云cos签名过期时间（秒）
   sign_expires_tencent_cos: 3600 * 2,
