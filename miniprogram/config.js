@@ -6,7 +6,7 @@
 
 module.exports = {
   // 版本号
-  app_version: "v1.16.3",
+  app_version: "v1.17.0",
   // 小程序appid
   app_id: "wxc91fb069737b7b84",
   // EMAS空间ID
@@ -147,7 +147,7 @@ module.exports = {
     // 开发团队页，pages/info/devTeam/devTeam
     dev_team: {
       share_tip: "开发团队",
-      team: "程序开发：\n· SYSU：渔政、蓝卷、XD、zJ、ArcherJo、yw、lauzeyu\n· HNU：xuann\n初期资料整理：xuann、晋不远、莫\n以及各校区、猫咖群的小伙伴~\n非常欢迎新朋友加入设计开发哇~！",
+      team: "程序开发：渔政、蓝卷、XD、zJ、ArcherJo、yw、lauzeyu、xuannfx、LightHouse-1024\n资料维护：ori\n初期资料整理：xuannfx、晋不远、莫\n以及各校区、猫咖群的小伙伴~\n非常欢迎新朋友加入设计开发哇~！",
     },
     // 识猫页，pages/recognize/recognize
     recognize: {
