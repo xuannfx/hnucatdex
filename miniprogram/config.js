@@ -6,7 +6,7 @@
 
 module.exports = {
   // 版本号
-  app_version: "v1.17.3",
+  app_version: "v1.17.4",
   // 小程序appid
   app_id: "wxc91fb069737b7b84",
   // EMAS空间ID
