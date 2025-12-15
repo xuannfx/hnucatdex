@@ -267,7 +267,8 @@
 
 .danger-button {
   background-color: var(--color-gray-light);
-  color: var(--color-gray-max);
+  color: var(--color-red);
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.02);
 }
 
 /* 加载更多部分 */
