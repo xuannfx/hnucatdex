@@ -196,11 +196,11 @@ picker, input {
 
 /* 位置信息 */
 .location-box {
-  box-shadow: 0 0 10rpx var(--color-gray-dark);
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
   padding: 20rpx 30rpx;
   margin: 20rpx 0;
   border-radius: 20rpx;
-  background: var(--color-primary-light);
+  background: var(--color-accent-light);
 }
 
 .location-header {
@@ -210,7 +210,7 @@ picker, input {
 .location-notice {
   display: block;
   font-size: 22rpx;
-  color: #e67e22;
+  color: var(--color-warm-sub);
   margin-top: 6rpx;
   line-height: 1.5;
 }
@@ -251,11 +251,16 @@ picker, input {
   padding: 10rpx 20rpx;
   margin: 0;
   border-radius: 20rpx;
-  background: var(--color-primary);
+  background: #fff;
   color: var(--color-primary-text);
-  border: none;
+  border: 2rpx solid var(--color-primary-text);
   line-height: 1.2;
   flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.location-btn::after {
+  border: none;
 }
 
 .location-clear-row {

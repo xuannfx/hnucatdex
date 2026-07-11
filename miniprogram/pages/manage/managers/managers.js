@@ -8,6 +8,7 @@ import { isDemoMode } from "../../../utils/demo";
 // 是否正在加载
 var loading = false;
 const app = getApp();
+
 Page({
 
   /**

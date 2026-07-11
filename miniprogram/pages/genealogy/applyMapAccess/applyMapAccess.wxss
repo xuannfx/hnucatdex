@@ -79,7 +79,7 @@ page {
 
 /* 申请条件 */
 .requirement-box {
-  background: var(--color-primary-light);
+  background: var(--color-accent-light);
   border-radius: 16rpx;
   padding: 25rpx;
   margin-bottom: 30rpx;
@@ -88,7 +88,7 @@ page {
 .req-title {
   font-size: 32rpx;
   font-weight: 600;
-  color: var(--color-primary-text);
+  color: var(--color-black-min);
   margin-bottom: 12rpx;
 }
 
@@ -100,7 +100,7 @@ page {
 
 .req-stats {
   font-size: 28rpx;
-  color: var(--color-primary);
+  color: var(--color-warm-sub);
   font-weight: 500;
   margin-bottom: 10rpx;
 }
@@ -119,11 +119,11 @@ page {
 
 /* 自动通过规则 */
 .auto-pass-box {
-  background: #f0f4ff;
+  background: var(--color-accent-light);
   border-radius: 16rpx;
   padding: 25rpx;
   margin-bottom: 30rpx;
-  border: 2rpx solid #d0d9f0;
+  border: 2rpx solid rgba(255, 192, 67, 0.32);
 }
 
 .auto-pass-box.active {

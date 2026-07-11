@@ -319,7 +319,7 @@ Page({
       })
       return false;
     } else {
-      this.assignProbFromScore(catList);
+      this.calculateSoftmaxProb(catList);
     }
 
     let displayList = [];

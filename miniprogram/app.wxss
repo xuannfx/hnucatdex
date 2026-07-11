@@ -28,6 +28,13 @@ page {
   --color-green: #22ad6d;
   --color-green-dark: #015e32;
 
+  --color-warm-text: #5D4037;
+  --color-warm-sub: #8D6E63;
+  --color-warm-line: #E6D0B3;
+
+  --color-accent: #FFC043;
+  --color-accent-light: rgba(255, 192, 67, 0.15);
+
   --color-badge-A: #e79249;
   --color-badge-B: #bb3b81;
   --color-badge-C: #638c16;

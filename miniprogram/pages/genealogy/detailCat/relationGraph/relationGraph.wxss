@@ -1,9 +1,9 @@
 @import "../../../public/wxss/iconfont.wxss";
 /* 变量定义：暖萌奶油风 */
 page {
-  --text-main: #5D4037;
-  --text-sub: #8D6E63;
-  --line-color: #E6D0B3;
+  --text-main: var(--color-warm-text);
+  --text-sub: var(--color-warm-sub);
+  --line-color: var(--color-warm-line);
   --blue: #A2D2FF;
   --pink: #FFC8DD;
   --mainNode: #FFB347;  /* var(--color-primary) */

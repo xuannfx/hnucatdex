@@ -15,10 +15,10 @@ Page({
     // 地图选点
     mapPickerVisible: false,
     mapPickerCampus: '',
-    mapPickerInitLat: 23.1026,  // 地图初始中心（绑定到 map 组件，创建后不变）
-    mapPickerInitLng: 113.2996,
-    mapPickerLat: 23.1026,      // 拖拽追踪坐标（用于显示与保存）
-    mapPickerLng: 113.2996,
+    mapPickerInitLat: 28.178,  // 地图初始中心（绑定到 map 组件，创建后不变）
+    mapPickerInitLng: 112.944,
+    mapPickerLat: 28.178,      // 拖拽追踪坐标（用于显示与保存）
+    mapPickerLng: 112.944,
     mapPickerInitScale: 14,     // 地图初始缩放（绑定到 map 组件，只有按钮改变它）
     mapPickerScale: 14,         // 追踪缩放（用于显示与保存）
     mapPickerHasCenter: false,   // 当前校区是否已有中心坐标
@@ -104,8 +104,8 @@ Page({
       var c = centers[campus];
       lat = c.latitude; lng = c.longitude; scale = c.scale;
     } else {
-      // 默认广州中山大学东校园中心
-      lat = 23.1026; lng = 113.2996; scale = 14;
+      // 默认湖南大学南校区中心
+      lat = 28.178; lng = 112.944; scale = 14;
     }
     this.setData({
       mapPickerVisible: true,

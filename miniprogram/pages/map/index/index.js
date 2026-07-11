@@ -358,10 +358,10 @@ Page({
         iconPath,
         callout: {
           content: cat.name || '猫咪',
-          color: '#92400E',
+          color: '#5D4037',
           fontSize: 11,
           borderRadius: 6,
-          bgColor: '#ffd101',
+          bgColor: '#fff',
           padding: 4,
           display: 'ALWAYS',
           textAlign: 'center'
@@ -686,7 +686,7 @@ Page({
     return Math.sqrt(dLat * dLat + dLng * dLng);
   },
 
-  // 用 Canvas 生成数量圈图标：橙色圆形 + 白色数字
+  // 用 Canvas 生成数量圈图标：暖橙圆形 + 白色数字
   _drawClusterIcon(canvas, count) {
     return new Promise((resolve) => {
       const timeout = setTimeout(() => resolve(null), 3000);
@@ -706,10 +706,10 @@ Page({
         ctx.fillStyle = '#FFFFFF';
         ctx.fill();
 
-        // 橙色内圈
+        // 暖橙内圈（对齐关系图谱中心节点色）
         ctx.beginPath();
         ctx.arc(size / 2, size / 2, size / 2 - 4, 0, Math.PI * 2);
-        ctx.fillStyle = '#FF6B35';
+        ctx.fillStyle = '#FFB347';
         ctx.fill();
 
         // 白色数字（数字越多字号越小）
@@ -796,6 +796,7 @@ Page({
       });
 
       const points = (res && res.success && res.data) || [];
+
       if (points.length < 2) {
         wx.showToast({ title: '该猫咪还没有足够的轨迹数据', icon: 'none' });
         // 兜底：用实际去重后的点数修正 trajectory_count，
@@ -820,7 +821,7 @@ Page({
       // 生成 polyline：红线连接所有点
       const polyline = [{
         points: formattedPoints.map(p => ({ latitude: p.latitude, longitude: p.longitude })),
-        color: '#E74C3C',
+        color: '#8D6E63',
         width: 4,
         dottedLine: false,
         arrowLine: true,
@@ -907,7 +908,7 @@ Page({
     return markers;
   },
 
-  // 在 Canvas 上绘制单个轨迹点 marker：主题色圆角框 + 白色文字
+  // 在 Canvas 上绘制单个轨迹点 marker：白底名字 tag 风格
   async _drawTrajectoryMarker(canvas, text, index) {
     return new Promise((resolve) => {
       const timeout = setTimeout(() => {
@@ -932,8 +933,11 @@ Page({
         canvas.height = canvasH * dpr;
         ctx.scale(dpr, dpr);
 
-        // 主题色圆角框（--color-primary: #ffd101）
-        const themeColor = '#ffd101';
+        // 与关系图谱名字 tag 保持一致：白底 + 深暖色文字 + 轻阴影
+        const themeColor = '#fff';
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.05)';
+        ctx.shadowBlur = 3;
+        ctx.shadowOffsetY = 1;
         ctx.fillStyle = themeColor;
         ctx.beginPath();
         ctx.moveTo(borderRadius, 0);
@@ -947,9 +951,11 @@ Page({
         ctx.arcTo(0, 0, borderRadius, 0, borderRadius);
         ctx.closePath();
         ctx.fill();
+        ctx.shadowColor = 'transparent';
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetY = 0;
 
-        // 深色文字（在黄色背景上用深色，提高可读性）
-        ctx.fillStyle = '#92400E';
+        ctx.fillStyle = '#5D4037';
         ctx.font = `bold ${fontSize}px sans-serif`;
         ctx.textAlign = 'left';
         ctx.textBaseline = 'middle';
