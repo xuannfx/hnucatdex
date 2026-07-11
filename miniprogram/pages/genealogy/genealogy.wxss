@@ -23,7 +23,7 @@ scroll-view {
   margin-bottom: 50rpx;
   font-size: 24rpx;
   line-height: 24rpx;
-  width: 635rpx;
+  width: 625rpx;
   border-radius: 15rpx;
 
   box-sizing: border-box;
@@ -32,6 +32,18 @@ scroll-view {
   box-shadow: 13rpx 13rpx 30rpx var(--color-gray);
   position: relative;
   /* TODO：重写为flex布局 */
+
+  /* 平滑过渡：宽度、阴影、上浮、圆角在展开/收起时动画 */
+  transition: width 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease, margin 0.3s ease;
+  z-index: 1;
+}
+
+.card.wide {
+  width: 700rpx;
+  /* 高级感：更强的投影 + 主题色高光 + 轻微上浮 */
+  box-shadow: 0 16rpx 48rpx rgba(0, 0, 0, 0.22), 0 4rpx 12rpx rgba(255, 209, 1, 0.25);
+  transform: translateY(-6rpx);
+  z-index: 100;
 }
 
 .card view.image {
@@ -39,6 +51,15 @@ scroll-view {
   border-radius: 15rpx 15rpx 0 0;
   position: relative;
   overflow: hidden;
+  background-color: var(--color-gray-light);
+  background-image: var(--img-default);
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 50% 50%;
+}
+
+.card.wide view.image {
+  height:500rpx;
 }
 
 .card view.image .image-title{
@@ -55,13 +76,28 @@ scroll-view {
 
 .card view.image image {
   width: 100%;
-  height: 590rpx;
-  background-color: var(--color-gray-light);
-	background-image: var(--img-default);
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-size: 50% 50%;
+  /* widthFix 模式下高度按图片比例自适应，移除固定 height */
   position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  will-change: transform;
+}
+
+/* aspectFill 模式（横屏照片填满容器）：需明确高度 100% 才能填满 */
+.card view.image image.mode-fill {
+  height: 100%;
+}
+
+/* 竖屏照片自动上下往返：CSS animation infinite alternate 由渲染引擎驱动，
+   无需 JS transitionend 切换方向，避免到顶/底时因 setData 异步导致的闪烁 */
+.card view.image image.pan-animate {
+  animation: cardPhotoPan var(--pan-duration, 6s) ease-in-out infinite alternate;
+}
+
+@keyframes cardPhotoPan {
+  from { transform: translateY(0); }
+  to   { transform: translateY(calc(var(--pan-distance, 0px) * -1)); }
 }
 
 .card view.image.to_star image {
@@ -232,6 +268,73 @@ scroll-view {
     content: '';
     width: 0;
     height: 0;
+}
+
+/* 展开卡片的动作按钮组：底部三个按钮（上传喵照 / 便利贴墙 / 猫猫详情） */
+.card-action-row {
+  display: flex;
+  margin: 24rpx 0 8rpx;
+  gap: 16rpx;
+  z-index: 5;
+  animation: cardBtnFadeIn 0.3s ease 0.1s both;
+}
+
+.card-action-btn {
+  flex: 1;
+  text-align: center;
+  font-size: 26rpx;
+  font-weight: 600;
+  letter-spacing: 2rpx;
+  padding: 20rpx 0;
+  border-radius: 14rpx;
+  color: #fff;
+}
+
+.card-action-btn:active {
+  opacity: 0.85;
+  transform: scale(0.97);
+}
+
+/* 上传喵照：柔和绿（鼠尾草绿） */
+.card-action-btn.btn-upload {
+  background: #6FB58A;
+  box-shadow: 0 4rpx 12rpx rgba(111, 181, 138, 0.35);
+}
+
+/* 便利贴墙：柔和橙（杏橙） */
+.card-action-btn.btn-comment {
+  background: #E89B6C;
+  box-shadow: 0 4rpx 12rpx rgba(232, 155, 108, 0.35);
+}
+
+/* 猫猫详情：主题色黄（柔化版，降低饱和度避免刺眼） */
+.card-action-btn.btn-detail {
+  background: #F0C04A;
+  box-shadow: 0 4rpx 12rpx rgba(240, 192, 74, 0.4);
+}
+
+/* 右上角"管理"按钮（仅管理员） */
+.card-manage-btn {
+  position: absolute;
+  top: 24rpx;
+  right: 24rpx;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  font-size: 22rpx;
+  padding: 8rpx 22rpx;
+  border-radius: 24rpx;
+  z-index: 5;
+  animation: cardBtnFadeIn 0.3s ease 0.1s both;
+}
+
+.card-manage-btn:active {
+  opacity: 0.8;
+  background: rgba(0, 0, 0, 0.7);
+}
+
+@keyframes cardBtnFadeIn {
+  from { opacity: 0; transform: translateY(10rpx); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* 广告栏 */
@@ -427,6 +530,7 @@ scroll-view {
   position: fixed;
   bottom: 300rpx;
   right: 30rpx;
+  z-index: 50;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -441,6 +545,7 @@ scroll-view {
   position: fixed;
   bottom: 200rpx;
   right: 30rpx;
+  z-index: 50;
 
   filter: drop-shadow(0px 12rpx 12rpx rgba(0, 0, 0, 0.15));
   transform: translateZ(0);

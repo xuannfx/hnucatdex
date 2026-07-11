@@ -28,6 +28,7 @@ import { convertRatingList, genDefaultRating } from "../../../utils/rating";
 import { showMpcode } from "../../../utils/mpcode";
 import { signCosUrl } from "../../../utils/common";
 import api from "../../../utils/cloudApi";
+import { isDemoMode, getDemoCat } from "../../../utils/demo";
 
 const app = getApp();
 
@@ -224,11 +225,20 @@ Page({
   },
 
   async loadCat() {
-    const { result: cat } = await app.mpServerless.db.collection('cat').findOne({
+    let { result: cat } = await app.mpServerless.db.collection('cat').findOne({
       _id: this.jsData.cat_id,
       deleted: { $ne: 1 }
     });
-    cat.photo = [];
+    if (!cat && isDemoMode()) {
+      cat = getDemoCat(this.jsData.cat_id);
+      cat.photo = [];
+      cat.characteristics = '';
+      cat.habit = '';
+      cat.rating = null;
+    } else {
+      cat.photo = [];
+    }
+    if (!cat.characteristics) cat.characteristics = '';
     if (cat.characteristics.length) {
       cat.characteristics_string = cat.characteristics + '\n';
     } else {
@@ -545,7 +555,8 @@ Page({
     for (const pic of this.jsData.album_raw) {
       var date;
       if (orderKey == 'shooting_date') {
-        date = pic.shooting_date;
+        // 按年月分组（取前7字符），保持相册展示整洁，排序依赖完整年月日
+        date = pic.shooting_date ? pic.shooting_date.substring(0, 7) : null;
       } else if (orderKey == 'mdate') {
         date = formatDate(pic.mdate, 'yyyy-MM');
       }
