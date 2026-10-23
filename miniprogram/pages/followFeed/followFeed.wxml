@@ -34,7 +34,7 @@
         <view class="cat-name">
           <text>{{feedItem.cat.name || '-'}}</text>
           <view class='cat-campus'>
-            <image class="location-logo" src="/pages/public/images/filter/location_gray.png" mode="aspectFit" lazy-load="true"></image>
+            <view class="iconfont icon-map-pin"></view>
             {{feedItem.cat.campus || '-'}}
           </view>
         </view>
@@ -51,6 +51,11 @@
             data-url="{{item.pic_prev}}"
             bind:tap="clickPhoto">
             <image src="{{item.pic}}" mode='aspectFill' lazy-load="true" loading="eager" webp="true"></image>
+            <!-- 单张照片的点赞按钮（右下角） -->
+            <view class="photo-like {{item.liked ? 'liked' : ''}}" catchtap="likeFeedItem" data-feed-index="{{outerIndex}}" data-item-id="{{item._id}}" data-item-type="photo">
+              <text class="iconfont {{item.liked ? 'icon-heart-filled' : 'icon-heart'}}"></text>
+              <text class="photo-like-num" wx:if="{{item.like_count > 0}}">{{item.like_count}}</text>
+            </view>
           </view>
       </view>
       <view class="photo-by">
@@ -77,7 +82,7 @@
         <view class="cat-name">
           <text>{{feedItem.cat.name || '-'}}</text>
           <view class='cat-campus'>
-            <image class="location-logo" src="/pages/public/images/filter/location_gray.png" mode="aspectFit" lazy-load="true"></image>
+            <view class="iconfont icon-map-pin"></view>
             {{feedItem.cat.campus || '-'}}
           </view>
         </view>
@@ -98,7 +103,13 @@
           {{item.content}}
         </view>
 
-        <view class="datetime">{{item.datetime}}</view>
+        <view class="comment-footer">
+          <view class="datetime">{{item.datetime}}</view>
+          <view class="interact-btn small {{item.liked ? 'liked' : ''}}" catchtap="likeFeedItem" data-feed-index="{{outerIndex}}" data-item-id="{{item._id}}" data-item-type="comment">
+            <text class="iconfont {{item.liked ? 'icon-heart-filled' : 'icon-heart'}}"></text>
+            <text class="interact-num">{{item.like_count || ''}}</text>
+          </view>
+        </view>
 
       </view>
 
@@ -107,7 +118,15 @@
         <view class="wavy-line bottom"></view>
       </view>
     </view>
-    
+
+    <!-- 去留言按钮 -->
+    <view class="interact-bar">
+      <view class="interact-btn" catchtap="toCommentBoard" data-cat_id="{{feedItem.cat._id}}">
+        <text class="iconfont icon-checklist"></text>
+        <text class="interact-num">去{{feedItem.cat.name || '猫猫'}}的便利贴墙</text>
+      </view>
+    </view>
+
   </view><!-- 留言 -->
   </block>
 

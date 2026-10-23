@@ -10,6 +10,21 @@ Page({
     text_cfg: text_cfg,
     github_link: "https://github.com/sysucats/zhongdamaopu",
     update_log: [{
+      version: "v1.20.1",
+      content: [
+        "新增成就、常驻点定位等功能（感谢ForrestMinter）",
+        "整理部分图标",
+        "优化审核页面UI"
+      ],
+      time: "2026/09/25"
+    }, {
+      version: "v1.19.7",
+      content: [
+        "修复UI小BUG",
+        "安全性增强（感谢2289088768）",
+      ],
+      time: "2026/09/22"
+    }, {
       version: "v1.19.6",
       content: [
         "首页卡片点击功能更新",

@@ -35,8 +35,14 @@ button.long {
   border-radius: 20rpx;
   background-color: #FFFFFF;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
+}
+
+.info-box {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
 }
 
 image {
@@ -53,6 +59,7 @@ image {
 
 /* 并排处理的按钮 */
 .buttons {
+  margin-top: 10rpx;
   display: flex;
   flex-direction: row;
 }
@@ -60,6 +67,7 @@ image {
 .buttons .button {
   border: 1rpx solid var(--color-gray-dark);
   padding: 10rpx 30rpx;
+  margin: 0 5rpx;
   font-size: 30rpx;
   background-color: #FFFFFF;
   transition: background-color 500ms ease,
@@ -91,6 +99,14 @@ image {
 .button.best.marked {
   border-color: var(--color-primary-dark);
   background-color: var(--color-primary);
+  color: white;
+}
+.button.transfer {
+  color: #722ed1;
+}
+.button.transfer.marked {
+  border-color: #531dab;
+  background-color: #722ed1;
   color: white;
 }
 
@@ -160,3 +176,96 @@ image {
   color: var(--color-gray-dark);
   text-align: center;
 }
+
+/* 待审核 / 审核记录 切换 */
+.mode-tabs {
+  display: flex;
+  background: #fff;
+  border-radius: 20rpx;
+  box-shadow: 0rpx 0rpx 30rpx var(--color-gray);
+  padding: 8rpx;
+  margin-bottom: 30rpx;
+}
+
+.mode-tab {
+  flex: 1;
+  text-align: center;
+  font-size: 30rpx;
+  color: var(--color-gray-dark);
+  padding: 16rpx 0;
+  border-radius: 14rpx;
+}
+
+.mode-tab.active {
+  background: var(--color-primary);
+  color: var(--color-text-onPrimary);
+  font-weight: bold;
+}
+
+/* 审核记录 */
+.history-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10rpx;
+}
+
+.history-summary {
+  font-size: 24rpx;
+  color: var(--color-gray-dark);
+}
+
+.img-toggle {
+  font-size: 24rpx;
+  color: var(--color-gray-dark);
+}
+
+.img-toggle checkbox-group {
+  display: inline-flex;
+  align-items: center;
+}
+
+.history-box image,
+.img-deleted,
+.img-hidden {
+  width: 160rpx;
+  height: 160rpx;
+  flex-shrink: 0;
+}
+
+.img-deleted,
+.img-hidden {
+  border-radius: 10rpx;
+  background-color: var(--color-gray-light);
+  color: var(--color-gray-dark);
+  font-size: 22rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10rpx;
+}
+
+/* 可点击加载单张图片 */
+.img-hidden {
+  color: var(--color-primary-dark);
+}
+
+.img-hidden:active {
+  opacity: 0.7;
+}
+
+.history-badges {
+  display: flex;
+  align-items: center;
+  margin-top: 12rpx;
+}
+
+.action-badge {
+  font-size: 22rpx;
+  padding: 4rpx 20rpx;
+  border-radius: 20rpx;
+  color: #fff;
+}
+
+.action-badge.pass { background-color: var(--color-green); }
+.action-badge.best { background-color: var(--color-primary-dark); }

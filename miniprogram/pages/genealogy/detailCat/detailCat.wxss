@@ -143,7 +143,7 @@ swiper-item image {
 .tags {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .tags .tag {
@@ -314,6 +314,11 @@ swiper-item image {
 .sort-button .picker {
   display: flex;
   align-items: center;
+  line-height: 28rpx;
+  font-size: 28rpx;
+}
+.sort-button .picker .iconfont {
+  margin: 0 5rpx;
 }
 
 /* 下面开始相册 */
@@ -354,7 +359,7 @@ swiper-item image {
   grid-column: 1 / -1; /* 让header横跨所有列 */
 }
 
-.album-block .header .icon-clock-o {
+.album-block .header .icon-clock {
   font-size: 35rpx;
   margin-right: 10rpx;
   color: var(--color-primary);
@@ -835,7 +840,7 @@ swiper-item image {
   align-items: center;
 }
 
-.latest-vaccine .icon-success {
+.latest-vaccine .icon-check {
   margin-right: 10rpx;
 }
 
@@ -913,12 +918,12 @@ swiper-item image {
   background-color: var(--color-gray);
 }
 
-.icon-success {
+.icon-check {
   font-size: 40rpx;
   color: var(--color-vaccine);
 }
 
-.icon-bulb-o {
+.icon-bulb {
   color: var(--color-red-dark); /* 过期图标颜色 */
   font-size: 40rpx;
 }
@@ -993,4 +998,19 @@ swiper-item image {
 .timeline-info {
   word-break: break-all;
   margin-bottom: 8rpx;
+}
+
+/* 领养提示：单行小字 */
+.adopt-banner {
+  background: linear-gradient(90deg, #fff7e6, #ffe7ba);
+  border-radius: 12rpx;
+  padding: 10rpx 24rpx;
+  margin: 16rpx 30rpx 0;
+  font-size: 24rpx;
+  line-height: 1.6;
+  color: #d46b08;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

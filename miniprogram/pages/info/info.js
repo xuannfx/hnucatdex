@@ -21,18 +21,21 @@ Page({
     // 卡片，不需要设计绘制卡片图，只需用放图标即可
     cards: [
       {
-        icon: "/pages/public/images/info/btn/dashboard.svg",
-        label: "详细数据看板",
-        path: "/pages/info/dashboard/dashboard",
-        css: "long"
-      }, {
         icon: "/pages/public/images/info/btn/user.svg",
         label: "个人主页",
         path: "/pages/info/userInfo/userInfo",
       }, {
+        icon: "/pages/public/images/info/btn/dashboard.svg",
+        label: "数据看板",
+        path: "/pages/info/dashboard/dashboard"
+      }, {
         icon: "/pages/public/images/info/btn/badge.svg",
         label: "徽章口袋",
         path: "/pages/packageA/pages/info/badge/badge",
+      }, {
+        icon: "/pages/public/images/info/btn/achievement.svg",
+        label: "我的成就",
+        path: "/pages/info/myAchievement/myAchievement",
       }, {
         icon: "/pages/public/images/info/btn/team.svg",
         label: "开发团队",
@@ -60,16 +63,48 @@ Page({
           {
             name: "部署指引",
             path: "/pages/debug/deployTip/deployTip",
-            icon: "icon-deploy"
-          },
-          // {
-          //   name: "生成秘钥",
-          //   path: "/pages/debug/genKeys/genKeys",
-          //   icon: "icon-genkey"
-          // },
+            icon: "icon-bulb"
+          }
         ],
       }, {
-        title: "管理后台",
+        title: "管理审核",
+        type: "管理后台",
+        show: "manager",
+        items: [
+          {
+            name: "照片审核",
+            path: "/pages/manage/checkPhotos/checkPhotos",
+            num: "numChkPhotos",
+            icon: "icon-photo-search"
+          },
+          {
+            name: "领养审核",
+            path: "/pages/manage/checkAdoption/checkAdoption",
+            num: "numChkAdoptions",
+            icon: "icon-user-share"
+          },
+          {
+            name: "便利贴审核",
+            path: "/pages/manage/checkComment/checkComment",
+            num: "numChkComments",
+            icon: "icon-checklist"
+          },
+          {
+            name: "反馈处理",
+            path: "/pages/manage/checkFeedbacks/checkFeedbacks",
+            num: "numFeedbacks",
+            icon: "icon-mail"
+          },
+          {
+            name: "人员管理",
+            path: "/pages/manage/managers/managers",
+            num: "numMapAccessApps",
+            icon: "icon-user-check"
+          },
+        ]
+      }, {
+        title: "小程序配置",
+        type: "管理后台",
         show: "manager",
         items: [
           {
@@ -78,73 +113,45 @@ Page({
             icon: "icon-description",
             dot: "true"
           },
-          // {
-          //   name: "数据看板",
-          //   path: "/pages/manage/dashboard/dashboard",
-          //   icon: "icon-bar-chart-o"
-          // },
-          {
-            name: "照片审核",
-            path: "/pages/manage/checkPhotos/checkPhotos",
-            num: "numChkPhotos",
-            icon: "icon-photo-o"
-          },
-          {
-            name: "便利贴审核",
-            path: "/pages/manage/checkComment/checkComment",
-            num: "numChkComments",
-            icon: "icon-smile-comment-o"
-          },
-          {
-            name: "反馈处理",
-            path: "/pages/manage/checkFeedbacks/checkFeedbacks",
-            num: "numFeedbacks",
-            icon: "icon-envelop-o"
-          },
           {
             name: "猫抓板公告",
             path: "/pages/news/createNews/createNews",
-            icon: "icon-edit"
+            icon: "icon-license"
           },
           {
             name: "校区/区域/花色",
             path: "/pages/manage/filters/filters",
-            icon: "icon-location-o"
+            icon: "icon-current-location"
           },
           {
             name: "猫猫管理",
             path: "/pages/manage/catManage/catManage",
-            icon: "icon-cluster-o"
-          },
-          {
-            name: "人员管理",
-            path: "/pages/manage/managers/managers",
-            num: "numMapAccessApps",
-            icon: "icon-manager-o"
+            icon: "icon-sitemap"
           },
           {
             name: "徽章管理",
             path: "/pages/manage/badgeDef/badgeDef",
-            icon: "icon-medel-o"
+            icon: "icon-diamond"
           },
           {
             name: "页面配置",
             path: "/pages/manage/pageSettings/pageSettings",
-            icon: "icon-newspaper-o"
+            icon: "icon-adjust-horizontal"
           },
           {
             name: "投喂记录",
             path: "/pages/manage/rewards/rewards",
-            icon: "icon-balance-o"
+            icon: "icon-redpacket"
           },
           {
             name: "照片处理",
             path: "/pages/manage/imProcess/imProcess",
             num: "numImProcess",
-            icon: "icon-todo-list-o"
+            icon: "icon-file-zip"
           }
         ]
       }
+
     ],
 
   },
@@ -236,12 +243,21 @@ Page({
     const { result: numFeedbacks } = await app.mpServerless.db.collection('feedback').count({ dealed: false });
     const { result: numImProcess } = await app.mpServerless.db.collection('photo').count(imProcessQf);
     const { result: numMapAccessApps } = await app.mpServerless.db.collection('user').count({ 'mapAccess.status': 'pending' });
+    // 待审核领养申请（集合可能尚未创建，容错处理）
+    let numChkAdoptions = 0;
+    try {
+      const { result } = await app.mpServerless.db.collection('adoption').count({ status: 'pending' });
+      numChkAdoptions = result;
+    } catch (err) {
+      console.log('[onShow] - adoption集合尚未创建');
+    }
     this.setData({
       "nums.numChkPhotos": numChkPhotos,
       "nums.numChkComments": numChkComments,
       "nums.numFeedbacks": numFeedbacks,
       "nums.numImProcess": numImProcess,
       "nums.numMapAccessApps": numMapAccessApps,
+      "nums.numChkAdoptions": numChkAdoptions,
       "showCond.manager": true,
     });
   },

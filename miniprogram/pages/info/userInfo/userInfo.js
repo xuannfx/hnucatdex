@@ -1,5 +1,6 @@
 import { getUser } from "../../../utils/user";
 import { deepcopy } from "../../../utils/utils";
+import { getUnlockedList, getShowcase, setShowcase } from "../../../utils/achievement";
 import config from "../../../config";
 import api from "../../../utils/cloudApi";
 
@@ -14,6 +15,12 @@ Page({
     user: null,
     showEdit: false,
 
+    // 成就展示位
+    showcase: [],
+    showAchvPicker: false,
+    unlockedAchv: [],
+    pickerSelected: [],
+
     // 一些菜单选项
     menu: [
       {
@@ -21,18 +28,28 @@ Page({
         items: [
           {
             label:"邀请好友",
-            icon:"icon-friends-o",
+            icon:"icon-users-plus",
             action:"shareApp",
             btnAble: true,
             btnType: "share",
           }, {
             label:"我关注的猫猫",
-            icon:"icon-like-o",
+            icon:"icon-heart",
             action:"/pages/info/myFollowCats/myFollowCats",
             btnAble: false,
           }, {
+            label:"我的足迹",
+            icon:"icon-history",
+            action:"/pages/info/myFootprint/myFootprint",
+            btnAble: false,
+          }, {
+            label:"我的领养",
+            icon:"icon-user-share",
+            action:"/pages/info/myAdoption/myAdoption",
+            btnAble: false,
+          }, {
             label:"信息反馈",
-            icon:"icon-envelop-o",
+            icon:"icon-mail",
             action:"/pages/info/feedback/feedback",
             btnAble: false,
           },
@@ -42,7 +59,7 @@ Page({
         items: [
           {
             label:"清除缓存",
-            icon:"icon-cross",
+            icon:"icon-delete",
             action:"clearCache",
             btnAble: false,
           },{
@@ -126,11 +143,96 @@ Page({
     // 监听用户信息更新事件
     this.boundLoadUser = this.loadUser.bind(this);
     app.globalData.eventBus.$on('userInfoUpdated', this.boundLoadUser);
+
+    // 加载成就展示位
+    this.loadShowcase();
+  },
+
+  // 加载成就展示位：设置过就按自选（全不选=不展示）；从未设置过则默认推荐最新解锁的3个
+  async loadShowcase() {
+    try {
+      const openid = this.data.user.openid;
+      let showcase = await getShowcase(openid);
+      if (showcase === null) {
+        const unlocked = await getUnlockedList();
+        showcase = unlocked.slice(-3).reverse();
+      }
+      this.setData({ showcase });
+    } catch (e) {
+      console.log('加载成就展示位失败', e);
+    }
+  },
+
+  // 打开展示位选择器
+  async openAchvPicker() {
+    const unlocked = await getUnlockedList();
+    if (unlocked.length === 0) {
+      wx.showToast({ title: '还没有解锁成就，先去互动吧~', icon: 'none' });
+      return;
+    }
+    const curKeys = this.data.showcase.map(s => s.key);
+    this.setData({
+      showAchvPicker: true,
+      unlockedAchv: unlocked,
+      pickerSelected: curKeys,
+    });
+    this._refreshPickerList();
+  },
+
+  // 刷新选择器列表的选中标记
+  _refreshPickerList() {
+    const sel = this.data.pickerSelected;
+    const list = this.data.unlockedAchv.map(a => ({ ...a, selected: sel.indexOf(a.key) >= 0 }));
+    this.setData({ unlockedAchv: list });
+  },
+
+  // 选择/取消一个成就（最多3个）
+  toggleAchvPick(e) {
+    const key = e.currentTarget.dataset.key;
+    let selected = this.data.pickerSelected.slice();
+    const idx = selected.indexOf(key);
+    if (idx >= 0) {
+      selected.splice(idx, 1);
+    } else {
+      if (selected.length >= 3) {
+        wx.showToast({ title: '最多展示3个成就', icon: 'none' });
+        return;
+      }
+      selected.push(key);
+    }
+    this.setData({ pickerSelected: selected });
+    this._refreshPickerList();
+  },
+
+  noop() {},
+
+  closeAchvPicker() {
+    this.setData({ showAchvPicker: false });
+  },
+
+  // 保存展示位
+  async saveAchvPicker() {
+    const keys = this.data.pickerSelected;
+    const ok = await setShowcase(keys);
+    if (!ok) {
+      wx.showToast({ title: '保存失败，请重试', icon: 'none' });
+      return;
+    }
+    this.setData({ showAchvPicker: false });
+    await this.loadShowcase();
+    wx.showToast({ title: '已保存', icon: 'success' });
   },
 
   onUnload() {
     // 移除用户信息更新事件监听
     app.globalData.eventBus.$off('userInfoUpdated', this.boundLoadUser);
+  },
+
+  onShow() {
+    // 从成就页返回时刷新展示位
+    if (this.data.user) {
+      this.loadShowcase();
+    }
   },
 
   async loadUser() {

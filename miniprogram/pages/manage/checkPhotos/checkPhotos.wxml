@@ -5,7 +5,14 @@
 </wxs>
 
 <block wx:if="{{auth}}">
-  <view id='total-count'><text>先逐张标记处理方式，再点击“批量审核”。\n图片可以放大，点击名字跳转猫猫详情。\n每次展示前20张，注意流量消耗哈。</text></view>
+  <!-- 待审核 / 审核记录 切换 -->
+  <view class="mode-tabs">
+    <view class="mode-tab {{mode === 'pending' ? 'active' : ''}}" data-mode="pending" bindtap="switchMode">待审核</view>
+    <view class="mode-tab {{mode === 'history' ? 'active' : ''}}" data-mode="history" bindtap="switchMode">审核记录</view>
+  </view>
+
+  <block wx:if="{{mode === 'pending'}}">
+  <view id='total-count'><text>先逐张标记处理方式，再点击“批量审核”。\n图片可以放大，点击名字跳转猫猫详情。\n标记“转移”的照片可批量移到另一只猫名下。</text></view>
   <view class="campus-list">
     <view class="campus {{index == active_campus ? 'active': ''}}" bindtap="bindClickCampus" data-key="{{index}}"
       wx:for="{{campus_list}}" wx:key="key">{{index}}（{{campus_counts[index] || 0}}）</view>
@@ -16,18 +23,22 @@
   <block wx:for="{{campus_list[active_campus]}}" wx:key="_id">
     <view class='verify-box' id="photo-{{index}}">
       <!-- <view class="imageShadowMask"></view> -->
-      <image mode='aspectFill' src='{{item.photo_id}}' bindtap='openBigPhoto' data-pid='{{item.photo_id}}'></image>
-      <view class="info">
-        <view class='label cat'><text bindtap="toCatDetail" data-cat_id="{{item.cat._id}}">{{item.cat.name}}（{{item.cat.campus}}）</text></view>
-        <view class='label user'>上传者：{{item.userInfo.nickName}}</view>
-        <view class='label user'>摄影师：{{item.photographer || item.userInfo.nickName}}</view>
-        <view class='label user shotTime'>拍摄时间：{{item.shooting_date}}</view>
-        <view wx:if='{{isHEIC.isHEIC(item.photo_id)}}' class='label tip'>* 照片格式为.HEIC，可能会显示不出来</view>
-        <view class="buttons">
-          <view class="button delete {{item.mark == 'delete' ? 'marked' : ''}}" bindtap='bindMark' data-index='{{index}}' data-type="delete">删除</view>
-          <view class="button pass {{item.mark == 'pass' ? 'marked' : ''}}" bindtap='bindMark' data-index='{{index}}' data-type="pass">通过</view>
-          <view class="button best {{item.mark == 'best' ? 'marked' : ''}}" bindtap='bindMark' data-index='{{index}}' data-type="best">精选</view>
+      <view class="info-box">
+        <image mode='aspectFill' src='{{item.photo_id}}' bindtap='openBigPhoto' data-pid='{{item.photo_id}}'></image>
+        <view class="info">
+          <view class='label cat'><text bindtap="toCatDetail" data-cat_id="{{item.cat._id}}">{{item.cat.name}}（{{item.cat.campus}}）</text></view>
+          <view class='label user'>上传者：{{item.userInfo.nickName}}</view>
+          <view class='label user'>摄影师：{{item.photographer || item.userInfo.nickName}}</view>
+          <view class='label user shotTime'>拍摄时间：{{item.shooting_date}}</view>
+          <view wx:if='{{isHEIC.isHEIC(item.photo_id)}}' class='label tip'>* 照片格式为.HEIC，可能会显示不出来</view>
         </view>
+      </view>
+      
+      <view class="buttons">
+        <view class="button delete {{item.mark == 'delete' ? 'marked' : ''}}" bindtap='bindMark' data-index='{{index}}' data-type="delete">删除</view>
+        <view class="button transfer {{item.mark == 'transfer' ? 'marked' : ''}}" bindtap='bindMark' data-index='{{index}}' data-type="transfer">转移</view>
+        <view class="button pass {{item.mark == 'pass' ? 'marked' : ''}}" bindtap='bindMark' data-index='{{index}}' data-type="pass">通过</view>
+        <view class="button best {{item.mark == 'best' ? 'marked' : ''}}" bindtap='bindMark' data-index='{{index}}' data-type="best">精选</view>
       </view>
     </view>
   </block>
@@ -35,7 +46,39 @@
     <button class='' bindtap="requestSubscribeMessage">订阅通知</button>
     <button class='primary' bindtap="bindCheckMulti">批量审核</button>
   </view>
-  
+
+  <!-- 转移目标猫选择 -->
+  <search-cat show="{{showTransferSelect}}" bind:select="onTransferTargetSelect" bind:close="onTransferSelectClose"></search-cat>
+  </block>
+
+  <!-- 审核记录（回溯：所有管理员的审核互相可见） -->
+  <block wx:if="{{mode === 'history'}}">
+    <view class="history-toolbar">
+      <view class="history-summary" wx:if="{{historyTotal}}">共 {{historyTotal}} 条审核记录</view>
+      <label class="img-toggle">
+        <checkbox-group bindchange="onToggleHistoryImages">
+          <checkbox value="show" checked="{{showHistoryImages}}" />显示全部图片
+        </checkbox-group>
+      </label>
+    </view>
+    <view class="tip" wx:if="{{!historyLoading && !historyList.length}}">暂无审核记录</view>
+    <view class='verify-box history-box' wx:for="{{historyList}}" wx:key="_id">
+      <view wx:if="{{item.imgError}}" class="img-deleted">图片已删除</view>
+      <image wx:elif="{{item.thumbSigned}}" mode='aspectFill' src='{{item.thumb}}' bindtap='openBigPhoto' data-pid='{{item.thumb}}' binderror="onHistoryImgError" data-index="{{index}}"></image>
+      <view wx:else class="img-hidden" bindtap="loadOneHistoryImage" data-index="{{index}}">点击加载图片</view>
+      <view class="info">
+        <view class='label cat'><text bindtap="toCatDetail" data-cat_id="{{item.cat_id}}">{{item.cat_name}}</text></view>
+        <view class='label user'>上传者：{{item.uploaderInfo.nickName || '未知'}}</view>
+        <view class='label user'>审核人：{{item.managerInfo.nickName || '未知'}}</view>
+        <view class='label user'>{{item.check_time_formatted}}</view>
+        <view class="history-badges">
+          <view class="action-badge {{item.action_class}}">{{item.action_text}}</view>
+        </view>
+      </view>
+    </view>
+    <view class="tip" wx:if="{{historyLoading}}">加载中...</view>
+    <view class="tip" wx:elif="{{historyNoMore && historyList.length}}">没有更多记录了</view>
+  </block>
 </block>
 
 <!-- 未授权提示 -->
