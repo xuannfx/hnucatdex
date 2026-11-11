@@ -1,2 +1,1 @@
-/* pages/manage/manageNews/modifyNews/modifyNews.wxss */
-@import'../createNews/createNews.wxss';
+@import "/pages/news/newsForm.wxss";
